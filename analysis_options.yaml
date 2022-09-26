@@ -1,0 +1,18 @@
+include: package:lints/recommended.yaml
+
+linter:
+  rules:
+ #   always_use_package_imports: true
+    unnecessary_parenthesis: true
+    curly_braces_in_flow_control_structures: false #recommended.yaml default:true
+    unawaited_futures: true
+    avoid_dynamic_calls: true
+
+analyzer:
+  language:
+#    strict-casts: true
+  errors:
+    # Increase the severity of the unused_import hint.
+    unused_import: warning
+#   exclude:
+#     - path/to/excluded/files/**
