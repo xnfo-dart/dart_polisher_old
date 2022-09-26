@@ -10,7 +10,7 @@ const String DART_STYLE_DEP_VERSION = "2.2.4";
 
 // Version string
 const String XNFOFMT_VERSION_STRING = "Formatter version: $XNFOFMT_VERSION"
-    " (based on dart_style: $FORKED_FROM_DART_STYLE_VERSION";
+    " (based on dart_style: $FORKED_FROM_DART_STYLE_VERSION)";
 
 // The last merge from dart_style
 // Note: Change this manually only when merging all changes from upstream up to *this version
