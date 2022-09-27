@@ -9,14 +9,14 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 
-import 'package:xnfo_formatter/xnfo_formatter.dart';
-import 'package:xnfo_formatter/src/dart_formatter/style_fix.dart';
-import 'package:xnfo_formatter/src/cli/cli_options.dart';
-import 'package:xnfo_formatter/src/cli/options.dart';
-import 'package:xnfo_formatter/src/cli/output.dart';
-import 'package:xnfo_formatter/src/cli/show.dart';
-import 'package:xnfo_formatter/src/cli/summary.dart';
-import 'package:xnfo_formatter/src/cli/io.dart';
+import 'package:dart_polisher/dart_polisher.dart';
+import 'package:dart_polisher/src/dart_formatter/style_fix.dart';
+import 'package:dart_polisher/src/cli/cli_options.dart';
+import 'package:dart_polisher/src/cli/options.dart';
+import 'package:dart_polisher/src/cli/output.dart';
+import 'package:dart_polisher/src/cli/show.dart';
+import 'package:dart_polisher/src/cli/summary.dart';
+import 'package:dart_polisher/src/cli/io.dart';
 
 class FormatCommand extends Command<int>
 {
@@ -25,7 +25,7 @@ class FormatCommand extends Command<int>
 
     @override
     String get description =>
-        "[$XNFOFMT_VERSION] Format Dart source code with custom styles and indents."
+        "[$VERSION] Format Dart source code with custom styles and indents."
         " (Fork based on dart_style $FORKED_FROM_DART_STYLE_VERSION)";
 
     @override
@@ -44,7 +44,7 @@ class FormatCommand extends Command<int>
 
         if (argResults['version'])
         {
-            print("Formatter version: $XNFOFMT_VERSION /"
+            print("Formatter version: $VERSION /"
                 " Fork based on dart_style: $FORKED_FROM_DART_STYLE_VERSION");
             return 0;
         }

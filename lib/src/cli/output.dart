@@ -7,7 +7,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:xnfo_formatter/src/dart_formatter/source_code.dart';
+import 'package:dart_polisher/src/dart_formatter/source_code.dart';
 
 /// Where formatted code results should go.
 enum Output {

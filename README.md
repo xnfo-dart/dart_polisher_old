@@ -1,15 +1,15 @@
-# Dart Formatter [![Formatter](https://shields.io/badge/dart-Formatter_(fork)-green?logo=dart&style=flat-square)](https://github.com/xnfo-dart/xnfo_formatter) ![Issues](https://img.shields.io/github/issues/xnfo-dart/xnfo_formatter)
-> Giving more options to format Dart code + CLI
+# Dart Polisher [![Formatter](https://shields.io/badge/dart-Formatter_(fork)-green?logo=dart&style=flat-square)](https://github.com/xnfo-dart/dart_polisher) ![Issues](https://img.shields.io/github/issues/xnfo-dart/dart_polisher)
+> Formatter for Dart source code + CLI + options
 
  - Customizable indent sizes *(tab sizes)*  
  - Use tab or spaces for indents  
- - Custom styles *(only 2 for now)*  
+ - Custom styles  
  - CLI for dir/file formatting  
 
 ## Download
-- From [Releases](https://github.com/xnfo-dart/xnfo_formatter/releases)
+- From [Releases](https://github.com/xnfo-dart/dart_polisher/releases)
  ## IDE Extensions
-- [VScode Extension](https://github.com/xnfo-dart/dart-format-vscode)
+- [VScode Extension](https://github.com/xnfo-dart/dart-polisher-vscode)
 
 ## Features
 TODO doc.

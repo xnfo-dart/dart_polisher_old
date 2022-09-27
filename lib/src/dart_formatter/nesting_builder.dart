@@ -5,7 +5,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:xnfo_formatter/xnfo_formatter.dart';
+import 'package:dart_polisher/dart_polisher.dart';
 
 import 'constants.dart';
 import 'nesting_level.dart';
