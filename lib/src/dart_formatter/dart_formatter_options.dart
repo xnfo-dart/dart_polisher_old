@@ -1,7 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:xnfo_formatter/src/dart_formatter/style_fix.dart';
-import 'package:xnfo_formatter/src/formatter_constants.dart';
+import 'package:xnfo_formatter/src/constants.dart';
 import 'package:xnfo_formatter/src/dart_formatter/utils/bitmasks.dart';
 
 /// Styles can have each different tab modes and indents.

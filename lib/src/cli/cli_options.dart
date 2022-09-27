@@ -8,7 +8,7 @@
 import 'dart:io';
 
 import 'package:xnfo_formatter/xnfo_formatter.dart';
-import 'package:xnfo_formatter/src/formatter_constants.dart';
+import 'package:xnfo_formatter/src/constants.dart';
 
 import 'output.dart';
 import 'show.dart';

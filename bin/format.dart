@@ -2,7 +2,7 @@ import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:xnfo_formatter/src/cli/commands/dartstyle_command.dart';
 import 'package:xnfo_formatter/src/cli/commands/formatter_command.dart';
-import 'package:xnfo_formatter/src/formatter_constants.dart';
+import 'package:xnfo_formatter/src/constants.dart';
 
 class CLIRunner<T> extends CommandRunner<T>
 {
