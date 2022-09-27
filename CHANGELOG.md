@@ -4,23 +4,26 @@
 ## [Unreleased]
 
 
-----
-## [0.9.1] - 27/9/2022
-- Option to use Spaces or Tabs when formatting<br> (vscode extension should automatically support it based on editor settings)
 
-----
+## [0.9.1] - 27/9/2022
+- Option to use Spaces or Tabs when formatting (vscode extension should automatically support it based on editor settings)
+
+<br>
+
 ## [0.9.0]
 ### Changed
 - Small versioning changes.
 - Fix try statements on Expanded Style
 
-----
+<br>
+
 ## [0.8.9]
 ### Changed
 - Fix outer brace style. Its almost set.
 - Small code refactoring, many more to fine-tune before release.
 
-----
+<br>
+
 ## [0.8.8]
 ### Added
 - New tab size indent options
@@ -31,18 +34,21 @@
 - Polished protocol error messages.
 - Code refactoring to mirror upstream repo in preparation for 1.0.
 
-----
+<br>
+
 ## [0.0.5]
 - Some refactoring
 
-----
+<br>
+
 ## [0.0.2]
 ### Added
 - Custom Indents.
 ### Changed
 ### Removed
 
-----
+<br>
+
 ## [0.0.1]
 - Initial version.
 
