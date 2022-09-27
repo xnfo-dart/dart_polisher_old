@@ -3,13 +3,13 @@ import 'package:dart_polisher/src/dart_formatter/dart_formatter_options.dart'
     show CodeStyle;
 
 // Note: The following line of code is modified by tool/grind.dart.
-const String XNFOFMT_VERSION = "0.9.1";
+const String VERSION = "0.9.1";
 // Note: The following line of code is modified by tool/grind.dart.
 // (it's based on the dependancy used when building this app.)
 const String DART_STYLE_DEP_VERSION = "2.2.4";
 
 // Version string
-const String XNFOFMT_VERSION_STRING = "Formatter version: $XNFOFMT_VERSION"
+const String VERSION_STRING = "Formatter version: $VERSION"
     " (based on dart_style: $FORKED_FROM_DART_STYLE_VERSION)";
 
 // The last merge from dart_style

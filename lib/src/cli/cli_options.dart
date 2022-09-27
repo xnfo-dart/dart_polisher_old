@@ -14,7 +14,7 @@ import 'output.dart';
 import 'show.dart';
 import 'summary.dart';
 
-const dartFormatterVersion = XNFOFMT_VERSION;
+const dartFormatterVersion = VERSION;
 
 /// Global options that affect how the formatter produces and uses its outputs.
 /// [foptions] field has options that specify how source code will be formatted

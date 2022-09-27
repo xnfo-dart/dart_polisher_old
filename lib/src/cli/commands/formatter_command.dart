@@ -25,7 +25,7 @@ class FormatCommand extends Command<int>
 
     @override
     String get description =>
-        "[$XNFOFMT_VERSION] Format Dart source code with custom styles and indents."
+        "[$VERSION] Format Dart source code with custom styles and indents."
         " (Fork based on dart_style $FORKED_FROM_DART_STYLE_VERSION)";
 
     @override
@@ -44,7 +44,7 @@ class FormatCommand extends Command<int>
 
         if (argResults['version'])
         {
-            print("Formatter version: $XNFOFMT_VERSION /"
+            print("Formatter version: $VERSION /"
                 " Fork based on dart_style: $FORKED_FROM_DART_STYLE_VERSION");
             return 0;
         }
