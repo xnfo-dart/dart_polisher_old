@@ -6,8 +6,8 @@
 // BSD-style license that can be found in the LICENSE file.
 import 'dart:io';
 
-import 'package:xnfo_formatter/src/dart_formatter/source_code.dart';
-import 'package:xnfo_formatter/src/cli/cli_options.dart';
+import 'package:dart_polisher/src/dart_formatter/source_code.dart';
+import 'package:dart_polisher/src/cli/cli_options.dart';
 
 /// The kind of summary shown after all formatting is complete.
 class Summary

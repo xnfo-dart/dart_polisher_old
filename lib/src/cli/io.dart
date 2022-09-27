@@ -57,7 +57,7 @@ Future<void> formatStdin(CliOptions options, List<int>? selection, String name) 
         catch (err, stack)
         {
             stderr.writeln('''Hit a bug in the formatter when formatting stdin.
-Please report at: https://github.com/xnfo-dart/xnfo_formatter/issues
+Please report at: https://github.com/xnfo-dart/dart_polisher/issues
 $err
 $stack''');
             exitCode = 70; // sysexits.h: EX_SOFTWARE
@@ -189,12 +189,12 @@ bool processFile(CliOptions options, File file, {String? displayPath})
     {
         stderr.writeln('''Hit a bug in the formatter when formatting $displayPath.
 $err
-Please report at https://github.com/xnfo-dart/xnfo_formatter/issues.''');
+Please report at https://github.com/xnfo-dart/dart_polisher/issues.''');
     }
     catch (err, stack)
     {
         stderr.writeln('''Hit a bug in the formatter when formatting $displayPath.
-Please report at https://github.com/xnfo-dart/xnfo_formatter/issues.
+Please report at https://github.com/xnfo-dart/dart_polisher/issues.
 $err
 $stack''');
     }

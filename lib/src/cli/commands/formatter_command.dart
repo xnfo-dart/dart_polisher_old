@@ -9,14 +9,14 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 
-import 'package:xnfo_formatter/xnfo_formatter.dart';
-import 'package:xnfo_formatter/src/dart_formatter/style_fix.dart';
-import 'package:xnfo_formatter/src/cli/cli_options.dart';
-import 'package:xnfo_formatter/src/cli/options.dart';
-import 'package:xnfo_formatter/src/cli/output.dart';
-import 'package:xnfo_formatter/src/cli/show.dart';
-import 'package:xnfo_formatter/src/cli/summary.dart';
-import 'package:xnfo_formatter/src/cli/io.dart';
+import 'package:dart_polisher/dart_polisher.dart';
+import 'package:dart_polisher/src/dart_formatter/style_fix.dart';
+import 'package:dart_polisher/src/cli/cli_options.dart';
+import 'package:dart_polisher/src/cli/options.dart';
+import 'package:dart_polisher/src/cli/output.dart';
+import 'package:dart_polisher/src/cli/show.dart';
+import 'package:dart_polisher/src/cli/summary.dart';
+import 'package:dart_polisher/src/cli/io.dart';
 
 class FormatCommand extends Command<int>
 {

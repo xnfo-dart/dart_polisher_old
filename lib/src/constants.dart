@@ -1,5 +1,5 @@
 // ignore_for_file: constant_identifier_names
-import 'package:xnfo_formatter/src/dart_formatter/dart_formatter_options.dart'
+import 'package:dart_polisher/src/dart_formatter/dart_formatter_options.dart'
     show CodeStyle;
 
 // Note: The following line of code is modified by tool/grind.dart.

@@ -15,7 +15,7 @@ import 'package:analyzer/error/error.dart';
 import 'package:analyzer/src/dart/scanner/scanner.dart';
 // ignore: implementation_imports
 import 'package:analyzer/src/string_source.dart';
-import 'package:xnfo_formatter/src/dart_formatter/dart_formatter_options.dart';
+import 'package:dart_polisher/src/dart_formatter/dart_formatter_options.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 import 'exceptions.dart';
@@ -24,7 +24,7 @@ import 'source_visitor.dart';
 import 'string_compare.dart' as string_compare;
 import 'style_fix.dart';
 
-export 'package:xnfo_formatter/src/dart_formatter/dart_formatter_options.dart';
+export 'package:dart_polisher/src/dart_formatter/dart_formatter_options.dart';
 
 /// Custom Dart source code formatter using a modified version of dart_style algorithms.
 class DartFormatter
