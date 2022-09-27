@@ -46,6 +46,8 @@
 ## 0.0.1
 - Initial version.
 
-[Unreleased]: https://github.com/tekert/dart_formatter/compare/v0.0.2...HEAD
 
-[0.0.1]: https://github.com/tekert/dart_formatter/releases/tag/v0.0.1
+[Unreleased]: https://github.com/xnfo-dart/dart-polisher/compare/v0.9.1...HEAD
+[0.9.1]: https://github.com/xnfo-dart/dart-polisher/releases/tag/v0.9.1
+[0.9.0]: https://github.com/xnfo-dart/dart-polisher/releases/tag/v0.9.0
+[0.8.9]: https://github.com/xnfo-dart/dart-polisher/releases/tag/v0.8.9
