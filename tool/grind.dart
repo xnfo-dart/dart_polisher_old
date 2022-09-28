@@ -32,7 +32,7 @@ Future<void> validate() async
     // Check if we can get parse all dependencys versions used as constants.
     if (await getDependancyVersion("dart_style") == null)
     {
-        throw "Cant parse all dependencys versions";
+        throw "Cant parse all dependencies versions";
     }
 }
 
