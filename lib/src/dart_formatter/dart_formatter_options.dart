@@ -167,6 +167,7 @@ class FormatterOptions
         this.fixes = const {},
         this.tabSizes = const CodeIndent()});
 
+    /// Accepts null values.
     const FormatterOptions.opt(
         {this.lineEnding,
         int? indent,

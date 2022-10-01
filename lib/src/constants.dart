@@ -15,7 +15,8 @@ const String VERSION_STRING = "Formatter version: $VERSION"
 // The last merge from dart_style
 // Note: Change this manually only when merging all changes from upstream up to *this version
 const String FORKED_FROM_DART_STYLE_VERSION = "2.2.4";
-const String FORKED_FROM_DART_STYLE_COMMIT = "https://github.com/dart-lang/dart_style/commit/dec7e72856a6b693d7f23a6a904bfe23d32b3ad4";
+const String FORKED_FROM_DART_STYLE_COMMIT =
+    "https://github.com/dart-lang/dart_style/commit/dec7e72856a6b693d7f23a6a904bfe23d32b3ad4";
 
 // Default values
 const int DEFAULT_BLOCK_INDENT = 4;

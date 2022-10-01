@@ -8,7 +8,6 @@
 import 'dart:io';
 
 import 'package:dart_polisher/dart_polisher.dart';
-import 'package:dart_polisher/src/constants.dart';
 
 import 'output.dart';
 import 'show.dart';

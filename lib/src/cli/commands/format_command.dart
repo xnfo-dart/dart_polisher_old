@@ -10,7 +10,6 @@ import 'dart:io';
 import 'package:args/command_runner.dart';
 
 import 'package:dart_polisher/dart_polisher.dart';
-import 'package:dart_polisher/src/dart_formatter/style_fix.dart';
 import 'package:dart_polisher/src/cli/cli_options.dart';
 import 'package:dart_polisher/src/cli/options.dart';
 import 'package:dart_polisher/src/cli/output.dart';
@@ -90,7 +89,7 @@ class FormatCommand extends Command<int>
         // If the user wants JSON output, default to no summary.
         if (!argResults.wasParsed('summary') && output == Output.json)
         {
-            summary = Summary.line();
+            summary = Summary.none;
         }
 
         // Can't use --verbose with anything but --help.

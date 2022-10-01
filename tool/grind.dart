@@ -20,7 +20,7 @@ void main(List<String> args) => grind(args);
 Future<void> validate() async
 {
     // Test it.
-    //await TestRunner().testAsync();
+    await TestRunner().testAsync();
 
     // Make sure it's warning clean.
     Analyzer.analyze('bin/format.dart', fatalWarnings: true);
