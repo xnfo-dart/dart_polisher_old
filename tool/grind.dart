@@ -2,6 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:grinder/grinder.dart';
@@ -9,6 +10,8 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml/yaml.dart' as yaml;
 import 'package:package_config/package_config.dart';
 import 'package:path/path.dart' as p;
+
+import "package:node_preamble/preamble.dart" as preamble;
 
 /// Matches the version line in dart_style's pubspec.
 final _versionPattern = RegExp(r'^version: .*$', multiLine: true);
@@ -36,6 +39,44 @@ Future<void> validate() async
     }
 }
 
+@Task('Compile to node project')
+void node()
+{
+    var out = 'build/node';
+
+    var pubspecFile = getFile('pubspec.yaml');
+    var pubspec = pubspecFile.readAsStringSync();
+    var pubspecMap = yaml.loadYaml(pubspec) as Map;
+    var repository = pubspecMap['repository'];
+
+    var fileName = 'index.js';
+
+    // Generate modified dart2js output suitable to run on node.
+    var tempFile = File('${Directory.systemTemp.path}/dart_polish_temp.js');
+
+    Dart2js.compile(File('tool/node_format_service.dart'), outFile: tempFile);
+
+    var dart2jsOutput = tempFile.readAsStringSync();
+    Directory(out).createSync(recursive: true);
+    File('$out/$fileName').writeAsStringSync('${preamble.getPreamble()}$dart2jsOutput');
+
+    File('$out/package.json')
+        .writeAsStringSync(const JsonEncoder.withIndent('  ').convert({
+        'name': 'dart-polisher',
+        'version': pubspecMap['version'],
+        'description': pubspecMap['description'],
+        'main': fileName,
+        'typings': 'dart-polisher.d.ts',
+        'scripts': {'test': 'echo "Error: no test specified" && exit 1'},
+        'repository': {'type': 'git', 'url': 'git+$repository'},
+        'author': 'xnfo',
+        'license': 'BSD',
+        'bugs': {'url': '$repository/issues'},
+        'homepage': repository
+    }));
+    //run('npm', arguments: ['publish', out]);
+}
+
 /// Gets ready to publish a new version of the package.
 ///
 /// To publish a version, you need to:
@@ -50,20 +91,12 @@ Future<void> validate() async
 ///
 ///   3. Commit the change to a branch.
 ///
-///   4. Send it out for review:
-///
-///         git cl upload
-///
-///   5. After the review is complete, land it:
-///
-///         git cl land
-///
-///   6. Tag the commit:
+///   4. Tag the commit:
 ///
 ///         git tag -a "<version>" -m "<version>"
 ///         git push origin <version>
 ///
-///   7. Publish the package:
+///   5. Publish the package:
 ///
 ///         pub lish
 @Task()

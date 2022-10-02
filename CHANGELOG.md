@@ -4,6 +4,12 @@
 ## [Unreleased]
 
 
+## [0.9.2] - 1/10/2022
+- `DartFormatter` constructor argument: `FormatterOptions` argument its now optional.
+- Updated analizer lib.
+- Ported tests.
+- Javascript build target. `dart run grinder node`
+
 
 ## [0.9.1] - 27/9/2022
 - Option to use Spaces or Tabs when formatting (vscode extension should automatically support it based on editor settings)
@@ -53,7 +59,8 @@
 - Initial version.
 
 
-[Unreleased]: https://github.com/xnfo-dart/dart-polisher/compare/v0.9.1...HEAD
+[Unreleased]: https://github.com/xnfo-dart/dart-polisher/compare/v0.9.2...HEAD
+[0.9.2]: https://github.com/xnfo-dart/dart-polisher/releases/tag/v0.9.2
 [0.9.1]: https://github.com/xnfo-dart/dart-polisher/releases/tag/v0.9.1
 [0.9.0]: https://github.com/xnfo-dart/dart-polisher/releases/tag/v0.9.0
 [0.8.9]: https://github.com/xnfo-dart/dart-polisher/releases/tag/v0.8.9

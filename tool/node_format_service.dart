@@ -14,26 +14,54 @@ import 'package:js/js.dart';
 
 @JS()
 @anonymous
-class FormatResult
+class FResult
 {
-    external factory FormatResult({String code, String error});
+    external factory FResult({String code, String error});
     external String get code;
     external String get error;
+}
+
+@JS()
+@anonymous
+class FOptions
+{
+    external factory FOptions({int style, int tabSize});
+    external int get style;
+    external int get tabSize;
 }
 
 @JS('exports.formatCode')
 external set formatCode(Function formatter);
 
+/*
+Usage example from generated javascript:
+
+  function dartMainRunner(main, args) {
+    main(process.argv.slice(2));
+    var o = {style: 1, tabSize: 4};
+    result = exports.formatCode("void a(){int a;}", o);
+
+    console.log(result.code);
+    console.log(result.error);
+  }
+*/
+
 void main()
 {
-    formatCode = allowInterop((String source)
+    formatCode = allowInterop((String source, [FOptions? options])
     {
-        var formatter = DartFormatter();
+        final style = CodeStyle.getEnum(options?.style);
+        final tabSize = CodeIndent.opt(
+            block: options?.tabSize,
+            expression: options?.tabSize,
+            cascade: options?.tabSize,
+            constructorInitializer: options?.tabSize);
+        var formatter = DartFormatter(FormatterOptions(style: style, tabSizes: tabSize));
 
         FormatterException exception;
         try
         {
-            return FormatResult(code: DartFormatter().format(source));
+            return FResult(code: formatter.format(source));
         }
         on FormatterException catch (err)
         {
@@ -44,7 +72,7 @@ void main()
         // Maybe it's a statement.
         try
         {
-            return FormatResult(code: formatter.formatStatement(source));
+            return FResult(code: formatter.formatStatement(source));
         }
         on FormatterException catch (err)
         {
@@ -59,7 +87,7 @@ void main()
         }
 
         // If we get here, it couldn't be parsed at all.
-        return FormatResult(code: source, error: '$exception');
+        return FResult(code: source, error: '$exception');
     });
 }
 

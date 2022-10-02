@@ -6,10 +6,10 @@ import 'package:dart_polisher/src/dart_formatter/utils/bitmasks.dart';
 
 /// Styles can have each different tab modes and indents.
 enum CodeStyle {
-    DartStyle("Dart  Style", "Google 'dart' style [custom tab indents & mode]", 0, 0),
+    DartStyle("Dart  Style", "Google 'dart' style [custom tab indents & tab mode]", 0, 0),
     ExpandedStyle(
         "ExpandedSetyle",
-        "dart_style with outer braces on block nodes",
+        "dart_style with outer braces on block-like nodes",
         1,
         BodyOpt.outerBracesOnBlockLike |
             BodyOpt.outerBracesOnEnumSmart |
@@ -18,6 +18,15 @@ enum CodeStyle {
     style2("**", "****", 2, 0),
     style3(".", "...", 3, 0),
     ;
+
+
+    /// Get the enum corresponding to [styleCode],
+    /// returns the default enum if there is no match or if [styleCode] is null.
+    static CodeStyle getEnum(int? styleCode)
+    {
+        return CodeStyle.values.firstWhere((element) => element.styleCode == styleCode,
+            orElse: () => CodeStyle.DartStyle);
+    }
 
     const CodeStyle(this.styleName, this.styleDescription, this.styleCode, this.mask);
 
