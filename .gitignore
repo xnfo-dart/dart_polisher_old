@@ -4,6 +4,8 @@
 
 # Conventional directory for build output.
 build/
+coverage/
+tool/genhtml.perl
 
 .vscode/
 *.dart1

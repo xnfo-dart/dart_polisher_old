@@ -32,11 +32,19 @@ Future<void> validate() async
     Dart.run('bin/format.dart',
         arguments: ['format', './benchmark/after.dart.txt', '-o', 'none']);
 
-    // Check if we can get parse all dependencys versions used as constants.
+    // Check if we can get parse all dependencies versions used as constants.
     if (await getDependancyVersion("dart_style") == null)
     {
         throw "Cant parse all dependencies versions";
     }
+}
+
+@Task('Compile to node project')
+void build()
+{
+    TaskArgs args = context.invocation.arguments;
+    print(args.arguments);
+    print(args);
 }
 
 @Task('Compile to node project')
