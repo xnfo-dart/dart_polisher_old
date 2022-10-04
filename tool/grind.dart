@@ -39,12 +39,38 @@ Future<void> validate() async
     }
 }
 
-@Task('Compile to node project')
+@Task('Compile to executable, use --output=filename')
 void build()
 {
     TaskArgs args = context.invocation.arguments;
-    print(args.arguments);
-    print(args);
+    var outName = args.getOption("output");
+    var release = args.getFlag("release");
+    var verbose = !args.getFlag("quiet");
+
+    var pubspecFile = getFile('pubspec.yaml');
+    var pubspec = pubspecFile.readAsStringSync();
+    var pubspecMap = yaml.loadYaml(pubspec) as yaml.YamlMap;
+    var pubspecExecutables = pubspecMap["executables"] as yaml.YamlMap;
+    var defaultOutName = pubspecExecutables.keys
+        .firstWhere((k) => pubspecExecutables[k] == 'format', orElse: () => null);
+
+    // Use default name from pubspec if not given
+    outName ??= defaultOutName;
+
+    // TODO(tekert): if release is true, run grinder bump
+
+    if (verbose)
+    {
+        print("Calling grinder \"${context.invocation.name}\" with arguments:");
+        print(args.arguments);
+    }
+
+    FilePath(buildDir).createDirectory();
+    var outFile = joinFile(buildDir, [outName!]);
+    var binFile = joinFile(binDir, ["format.dart"]);
+
+    // There should be a Dart Compile method but there is not, so we run it manually. (dart compile "-v" flag is not in help messages)
+    run(dartVM.path, arguments: ["compile", "exe", binFile.path, "-o", outFile.path, verbose ? "-v" : "--verbosity=error"], quiet: !verbose);
 }
 
 @Task('Compile to node project')

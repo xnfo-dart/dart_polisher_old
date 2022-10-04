@@ -9,7 +9,9 @@
 - Updated analizer lib.
 - Ported tests.
 - Javascript build target. `dart run grinder node`
+- Build task. `dart run grinder build --output=filename --release`
 
+<br>
 
 ## [0.9.1] - 27/9/2022
 - Option to use Spaces or Tabs when formatting (vscode extension should automatically support it based on editor settings)

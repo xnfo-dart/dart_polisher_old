@@ -12,7 +12,6 @@ tool/genhtml.perl
 *.dill
 
 /benchmark/debug.txt
-/tool/protocol_spec/generated/**
 
 /bin/**
 !/bin/format.dart
