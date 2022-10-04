@@ -19,7 +19,6 @@ enum CodeStyle {
     style3(".", "...", 3, 0),
     ;
 
-
     /// Get the enum corresponding to [styleCode],
     /// returns the default enum if there is no match or if [styleCode] is null.
     static CodeStyle getEnum(int? styleCode)

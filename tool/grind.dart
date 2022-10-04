@@ -28,9 +28,8 @@ Future<void> validate() async
     // Make sure it's warning clean.
     Analyzer.analyze('bin/format.dart', fatalWarnings: true);
 
-    // Format it.
-    Dart.run('bin/format.dart',
-        arguments: ['format', './benchmark/after.dart.txt', '-o', 'none']);
+    // Format project.
+    Dart.run('bin/format.dart', arguments: ["format", ".", "-s", "1", "-l", "90"]);
 
     // Check if we can get parse all dependencies versions used as constants.
     if (await getDependancyVersion("dart_style") == null)
@@ -39,25 +38,26 @@ Future<void> validate() async
     }
 }
 
+@Task()
+Future<void> validateCI() async
+{
+    // Test it.
+    await TestRunner().testAsync();
+
+    // Make sure it's warning clean.
+    Analyzer.analyze('bin/format.dart', fatalWarnings: true);
+
+    // Style is applied when merging.
+}
+
 @Task('Compile to executable, use --output=filename')
-void build()
+//@Depends(validateCI) //TODO(tekert): enable when its finished
+void buildexe()
 {
     TaskArgs args = context.invocation.arguments;
     var outName = args.getOption("output");
     var release = args.getFlag("release");
     var verbose = !args.getFlag("quiet");
-
-    var pubspecFile = getFile('pubspec.yaml');
-    var pubspec = pubspecFile.readAsStringSync();
-    var pubspecMap = yaml.loadYaml(pubspec) as yaml.YamlMap;
-    var pubspecExecutables = pubspecMap["executables"] as yaml.YamlMap;
-    var defaultOutName = pubspecExecutables.keys
-        .firstWhere((k) => pubspecExecutables[k] == 'format', orElse: () => null);
-
-    // Use default name from pubspec if not given
-    outName ??= defaultOutName;
-
-    // TODO(tekert): if release is true, run grinder bump
 
     if (verbose)
     {
@@ -65,16 +65,38 @@ void build()
         print(args.arguments);
     }
 
+    // Get pubspec executable targets names
+    var pubspecFile = getFile('pubspec.yaml');
+    var pubspec = pubspecFile.readAsStringSync();
+    var pubspecMap = yaml.loadYaml(pubspec) as yaml.YamlMap;
+    var pubspecExecutables = pubspecMap["executables"] as yaml.YamlMap;
+    var defaultOutName = pubspecExecutables.keys
+        .firstWhere((k) => pubspecExecutables[k] == 'format', orElse: () => null);
+    // Use default name from pubspec if not given
+    outName ??= defaultOutName;
+
+    // TODO(tekert): if release is true, run grinder bump
+
     FilePath(buildDir).createDirectory();
     var outFile = joinFile(buildDir, [outName!]);
     var binFile = joinFile(binDir, ["format.dart"]);
 
-    // There should be a Dart Compile method but there is not, so we run it manually. (dart compile "-v" flag is not in help messages)
-    run(dartVM.path, arguments: ["compile", "exe", binFile.path, "-o", outFile.path, verbose ? "-v" : "--verbosity=error"], quiet: !verbose);
+    // There should be a Dart Compile method but there is not, so we run it manually.
+    // (dart compile "-v" flag is not in help messages)
+    run(dartVM.path,
+        arguments: [
+            "compile",
+            "exe",
+            binFile.path,
+            "-o",
+            outFile.path,
+            verbose ? "-v" : "--verbosity=error"
+        ],
+        quiet: !verbose);
 }
 
 @Task('Compile to node project')
-void node()
+void buildnode()
 {
     var out = 'build/node';
 
