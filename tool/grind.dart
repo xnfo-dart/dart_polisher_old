@@ -47,23 +47,18 @@ Future<void> validateCI() async
     // Make sure it's warning clean.
     Analyzer.analyze('bin/format.dart', fatalWarnings: true);
 
-    // Style is applied when merging.
+    // Style is applied when bumping.
 }
 
-@Task('Compile to executable, use --output=filename')
-//@Depends(validateCI) //TODO(tekert): enable when its finished
-void buildexe()
+@Task('Compile to native, use --output=filename')
+@Depends(validateCI)
+Future<void> build() async
 {
     TaskArgs args = context.invocation.arguments;
     var outName = args.getOption("output");
-    var release = args.getFlag("release");
+    //var release = args.getFlag("release");
     var verbose = !args.getFlag("quiet");
-
-    if (verbose)
-    {
-        print("Calling grinder \"${context.invocation.name}\" with arguments:");
-        print(args.arguments);
-    }
+    //var bumpTask = context.grinder.getTask("bump");
 
     // Get pubspec executable targets names
     var pubspecFile = getFile('pubspec.yaml');
@@ -74,9 +69,27 @@ void buildexe()
         .firstWhere((k) => pubspecExecutables[k] == 'format', orElse: () => null);
     // Use default name from pubspec if not given
     outName ??= defaultOutName;
-
-    // TODO(tekert): if release is true, run grinder bump
-
+/*
+    // If release is true, run grinder bump
+    if (release)
+    {
+        if (bumpTask == null) throw "--release: bump: task doesn't exists";
+        // Execute bump task with build's arguments.
+        // This runs on runZoned with no error zone.
+        try
+        {
+            // bump is async, wait for it.
+            await bumpTask.execute(context, TaskArgs("bump", args.arguments));
+            //TODO: make bump return to previous state after compile.
+        }
+        catch (e)
+        {
+            //TODO(tekert): handle build versions in release mode.
+            log("--release: bump: version is already in release state, bump skipped.");
+        }
+    }
+*/
+    // Setup file output to compile
     FilePath(buildDir).createDirectory();
     var outFile = joinFile(buildDir, [outName!]);
     var binFile = joinFile(binDir, ["format.dart"]);
@@ -95,8 +108,8 @@ void buildexe()
         quiet: !verbose);
 }
 
-@Task('Compile to node project')
-void buildnode()
+@Task('Compile to node js')
+Future<void> node() async
 {
     var out = 'build/node';
 

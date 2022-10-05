@@ -4,7 +4,7 @@
 ## [Unreleased]
 
 
-## [0.9.2] - 1/10/2022
+## [0.9.2-beta] - 1/10/2022
 - `DartFormatter` constructor argument: `FormatterOptions` argument its now optional.
 - Updated analizer lib.
 - Ported tests.
