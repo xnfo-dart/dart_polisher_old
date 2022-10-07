@@ -56,9 +56,7 @@ Future<void> build() async
 {
     TaskArgs args = context.invocation.arguments;
     var outName = args.getOption("output");
-    //var release = args.getFlag("release");
     var verbose = !args.getFlag("quiet");
-    //var bumpTask = context.grinder.getTask("bump");
 
     // Get pubspec executable targets names
     var pubspecFile = getFile('pubspec.yaml');
@@ -69,26 +67,7 @@ Future<void> build() async
         .firstWhere((k) => pubspecExecutables[k] == 'format', orElse: () => null);
     // Use default name from pubspec if not given
     outName ??= defaultOutName;
-/*
-    // If release is true, run grinder bump
-    if (release)
-    {
-        if (bumpTask == null) throw "--release: bump: task doesn't exists";
-        // Execute bump task with build's arguments.
-        // This runs on runZoned with no error zone.
-        try
-        {
-            // bump is async, wait for it.
-            await bumpTask.execute(context, TaskArgs("bump", args.arguments));
-            //TODO: make bump return to previous state after compile.
-        }
-        catch (e)
-        {
-            //TODO(tekert): handle build versions in release mode.
-            log("--release: bump: version is already in release state, bump skipped.");
-        }
-    }
-*/
+
     // Setup file output to compile
     FilePath(buildDir).createDirectory();
     var outFile = joinFile(buildDir, [outName!]);
@@ -111,6 +90,9 @@ Future<void> build() async
 @Task('Compile to node js')
 Future<void> node() async
 {
+    TaskArgs args = context.invocation.arguments;
+    var bench = args.getFlag("benchmark");
+
     var out = 'build/node';
 
     var pubspecFile = getFile('pubspec.yaml');
@@ -120,14 +102,24 @@ Future<void> node() async
 
     var fileName = 'index.js';
 
-    // Generate modified dart2js output suitable to run on node.
-    var tempFile = File('${Directory.systemTemp.path}/dart_polish_temp.js');
-
-    Dart2js.compile(File('tool/node_format_service.dart'), outFile: tempFile);
-
-    var dart2jsOutput = tempFile.readAsStringSync();
+    var outFile = File('$out/$fileName');
     Directory(out).createSync(recursive: true);
-    File('$out/$fileName').writeAsStringSync('${preamble.getPreamble()}$dart2jsOutput');
+    Dart2js.compile(File('tool/node_format_service.dart'), outFile: outFile);
+
+    var dart2jsOutput = outFile.readAsStringSync();
+    outFile.writeAsStringSync('${preamble.getPreamble()}$dart2jsOutput');
+
+    // Benchmark Test
+    // 10x slower than Dart :(
+    if (bench)
+    {
+        var tempFile = File('${Directory.systemTemp.path}/dart_polish_bench.js');
+        Dart2js.compile(File('benchmark/js/benchmark_js.dart'), outFile: tempFile);
+
+        var dart2jsBenOutput = tempFile.readAsStringSync();
+        Directory(out).createSync(recursive: true);
+        File('$out/bench.js').writeAsStringSync('${preamble.getPreamble()}$dart2jsBenOutput');
+    }
 
     File('$out/package.json')
         .writeAsStringSync(const JsonEncoder.withIndent('  ').convert({
@@ -144,6 +136,8 @@ Future<void> node() async
         'homepage': repository
     }));
     //run('npm', arguments: ['publish', out]);
+
+    log("Package for node had been created in: ${Directory(out).absolute}");
 }
 
 /// Gets ready to publish a new version of the package.

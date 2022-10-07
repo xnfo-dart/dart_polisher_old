@@ -2,11 +2,11 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:io';
+//import 'dart:io'; // Not compilable to js
 
 //import 'package:dart_style/dart_style.dart';
 import 'package:dart_polisher/dart_polisher.dart';
-import 'package:path/path.dart' as p;
+import 'string_codes.dart' as codes;
 
 const _numTrials = 100;
 const _formatsPerTrial = 30;
@@ -14,10 +14,10 @@ const _formatsPerTrial = 30;
 /// Note, these files use ".txt" because while they can be *parsed* correctly,
 /// they don't resolve without error. That's OK because the formatter doesn't
 /// care about that.
-final source = loadFile('before.dart.txt');
-final expected = loadFile('after.dart.txt');
+final source = codes.before;
+final expected = codes.after;
 
-void main(List<String> args)
+int main(List<String> args)
 {
     var best = 99999999.0;
 
@@ -45,7 +45,7 @@ void main(List<String> args)
         if (result != expected)
         {
             print('Incorrect output:\n$result');
-            exit(1);
+            return 1;
         }
 
         // Don't print the first run. It's always terrible since the VM hasn't
@@ -55,12 +55,8 @@ void main(List<String> args)
     }
 
     printResult('Best   ', best);
-}
 
-String loadFile(String name)
-{
-    var path = p.join(p.dirname(p.fromUri(Platform.script)), name);
-    return File(path).readAsStringSync();
+    return 0;
 }
 
 void printResult(String label, double time)
@@ -80,8 +76,8 @@ String padLeft(input, int length)
     return result;
 }
 
-// after.dart.txt uses Style 1 with default 4 spaces indentation.
-final opt = FormatterOptions(style: CodeStyle.ExpandedStyle, tabSizes: CodeIndent());
+// constants uses Style 0 with default 4 spaces indentation.
+final opt = FormatterOptions();
 
 String formatSource()
 {

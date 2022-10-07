@@ -8,8 +8,8 @@
 - `DartFormatter` constructor argument: `FormatterOptions` argument its now optional.
 - Updated analizer lib.
 - Ported tests.
-- Javascript build target. `dart run grinder buildnode`
-- Build task. `dart run grinder buildexe --output=filename --release`
+- Javascript build target. `dart run grinder node`
+- Build task. `dart run grinder build --output=filename`
 
 <br>
 

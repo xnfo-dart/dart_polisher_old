@@ -116,14 +116,14 @@ class CodeIndent
     /// The ":" on a wrapped constructor initialization list.
     final int constructorInitializer;
 
-    // If a parameter is ommited a default value is asigned.
+    // If a parameter is ommited a default value is assigned.
     const CodeIndent(
         {this.block = DEFAULT_BLOCK_INDENT,
         this.cascade = DEFAULT_CASCADE_INDENT,
         this.expression = DEFAULT_EXPRESSION_INDENT,
         this.constructorInitializer = DEFAULT_CONSTRUCTOR_INITIALIZER_INDENT});
 
-    // If a parameter is ommited or null a default value is asigned.
+    // If a parameter is ommited or null a default value is assigned.
     const CodeIndent.opt(
         {int? block, int? cascade, int? expression, int? constructorInitializer})
         : block = block ?? DEFAULT_BLOCK_INDENT,

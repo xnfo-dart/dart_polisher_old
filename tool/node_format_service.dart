@@ -10,24 +10,78 @@ import 'dart:math' as math;
 import 'package:dart_polisher/dart_polisher.dart';
 import 'package:js/js.dart';
 
-//TODO (tekert): Expose formatter options
-
+/// Formatted result from a call to exports.formatCode
 @JS()
 @anonymous
-class FResult
+abstract class FResult
 {
     external factory FResult({String code, String error});
     external String get code;
     external String get error;
 }
 
+/// Indents javascript interface
 @JS()
 @anonymous
-class FOptions
+abstract class FIndent
 {
-    external factory FOptions({int style, int tabSize});
-    external int get style;
-    external int get tabSize;
+    /// The number of spaces in a block or collection body.
+    external int? get block;
+
+    /// How much wrapped cascade sections indent.
+    external int? get cascade;
+
+    /// The number of spaces in a single level of expression nesting.
+    external int? get expression;
+
+    /// The ":" on a wrapped constructor initialization list.
+    external int? get constructorInitializer;
+
+    external factory FIndent(
+        {int? block, int? cascade, int? expression, int? constructorInitializer});
+}
+
+/// Formatter javascript interface
+@JS()
+@anonymous
+abstract class FOptions
+{
+    external factory FOptions(
+        {int? style,
+        FIndent? tabSizes,
+        int? indent,
+        int? pageWidth,
+        String? lineEnding,
+        //Set<StyleFix> fixes,
+        bool insertSpaces});
+
+    /// see [CodeStyle]
+    external int? get style;
+
+    /// Default tab size
+    external FIndent? get tabSizes;
+
+    /// The number of spaces of indentation to prefix the output with.
+    /// note: this is for the whole page, meaning from column 1, like padding.
+    /// for tab size see [tabSizes]
+    external int? indent;
+
+    /// The number of columns that formatted output should be constrained to fit
+    /// within.
+    external int? pageWidth;
+
+    /// The string that newlines should use.
+    ///
+    /// If not explicitly provided, this is inferred from the source text. If the
+    /// first newline is `\r\n` (Windows), it will use that. Otherwise, it uses
+    /// Unix-style line endings (`\n`).
+    external String? lineEnding;
+
+    /// The style fixes to apply while formatting.
+    //external Set<StyleFix> fixes;
+
+    /// Set type of tab to use [true] for space, [false] for tabs
+    external bool insertSpaces;
 }
 
 @JS('exports.formatCode')
@@ -38,25 +92,41 @@ Usage example from generated javascript:
 
   function dartMainRunner(main, args) {
     main(process.argv.slice(2));
-    var o = {style: 1, tabSize: 4};
+
+    let i = {block: 9, cascade: 9,  expression: 9, constructorInitializer: 9};
+    let o = {style: 1, tabSizes: i, indent: 0, pageWidth: 80, insertSpaces: true};
     result = exports.formatCode("void a(){int a;}", o);
 
     console.log(result.code);
-    console.log(result.error);
+    console.log("ERROR: " + result.error);
   }
 */
 
+// Acording to benchmarks js version runs 10x Slower than Dart.
 void main()
 {
     formatCode = allowInterop((String source, [FOptions? options])
     {
         final style = CodeStyle.getEnum(options?.style);
+
         final tabSize = CodeIndent.opt(
-            block: options?.tabSize,
-            expression: options?.tabSize,
-            cascade: options?.tabSize,
-            constructorInitializer: options?.tabSize);
-        var formatter = DartFormatter(FormatterOptions(style: style, tabSizes: tabSize));
+            block: options?.tabSizes?.block,
+            expression: options?.tabSizes?.expression,
+            cascade: options?.tabSizes?.cascade,
+            constructorInitializer: options?.tabSizes?.constructorInitializer,
+        );
+
+        final o = FormatterOptions.opt(
+            style: style,
+            tabSizes: tabSize,
+            indent: options?.indent,
+            insertSpaces: options?.insertSpaces,
+            pageWidth: options?.pageWidth,
+            lineEnding: options?.lineEnding,
+            //fixes: options?.fixes,
+        );
+
+        var formatter = DartFormatter(o);
 
         FormatterException exception;
         try
