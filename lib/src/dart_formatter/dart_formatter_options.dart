@@ -1,7 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:dart_polisher/src/dart_formatter/style_fix.dart';
-import 'package:dart_polisher/src/constants.dart';
+import 'package:dart_polisher/src/dp_constants.dart';
 import 'package:dart_polisher/src/dart_formatter/utils/bitmasks.dart';
 
 /// Styles can have each different tab modes and indents.
@@ -118,19 +118,19 @@ class CodeIndent
 
     // If a parameter is ommited a default value is assigned.
     const CodeIndent(
-        {this.block = DEFAULT_BLOCK_INDENT,
-        this.cascade = DEFAULT_CASCADE_INDENT,
-        this.expression = DEFAULT_EXPRESSION_INDENT,
-        this.constructorInitializer = DEFAULT_CONSTRUCTOR_INITIALIZER_INDENT});
+        {this.block = DefaultValue.DEFAULT_BLOCK_INDENT,
+        this.cascade = DefaultValue.DEFAULT_CASCADE_INDENT,
+        this.expression = DefaultValue.DEFAULT_EXPRESSION_INDENT,
+        this.constructorInitializer = DefaultValue.DEFAULT_CONSTRUCTOR_INITIALIZER_INDENT});
 
     // If a parameter is ommited or null a default value is assigned.
     const CodeIndent.opt(
         {int? block, int? cascade, int? expression, int? constructorInitializer})
-        : block = block ?? DEFAULT_BLOCK_INDENT,
-          cascade = cascade ?? DEFAULT_CASCADE_INDENT,
-          expression = expression ?? DEFAULT_EXPRESSION_INDENT,
+        : block = block ?? DefaultValue.DEFAULT_BLOCK_INDENT,
+          cascade = cascade ?? DefaultValue.DEFAULT_CASCADE_INDENT,
+          expression = expression ?? DefaultValue.DEFAULT_EXPRESSION_INDENT,
           constructorInitializer =
-              constructorInitializer ?? DEFAULT_CONSTRUCTOR_INITIALIZER_INDENT;
+              constructorInitializer ?? DefaultValue.DEFAULT_CONSTRUCTOR_INITIALIZER_INDENT;
 }
 
 /// Options that control how the code will be formattend
@@ -169,9 +169,9 @@ class FormatterOptions
     const FormatterOptions(
         {this.lineEnding,
         this.indent = 0,
-        this.pageWidth = DEFAULT_PAGEWIDTH,
-        this.insertSpaces = DEFAULT_INSERTSPACES,
-        this.style = DEFAULT_STYLE,
+        this.pageWidth = DefaultValue.DEFAULT_PAGEWIDTH,
+        this.insertSpaces = DefaultValue.DEFAULT_INSERTSPACES,
+        this.style = DefaultValue.DEFAULT_STYLE,
         this.fixes = const {},
         this.tabSizes = const CodeIndent()});
 
@@ -185,9 +185,9 @@ class FormatterOptions
         Set<StyleFix>? fixes,
         CodeIndent? tabSizes})
         : indent = indent ?? 0,
-          pageWidth = pageWidth ?? DEFAULT_PAGEWIDTH,
-          insertSpaces = insertSpaces ?? DEFAULT_INSERTSPACES,
-          style = style ?? DEFAULT_STYLE,
+          pageWidth = pageWidth ?? DefaultValue.DEFAULT_PAGEWIDTH,
+          insertSpaces = insertSpaces ?? DefaultValue.DEFAULT_INSERTSPACES,
+          style = style ?? DefaultValue.DEFAULT_STYLE,
           fixes = fixes ?? const {},
           tabSizes = tabSizes ?? const CodeIndent();
 }

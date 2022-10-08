@@ -7,7 +7,7 @@
 import 'package:args/args.dart';
 
 import 'package:dart_polisher/src/dart_formatter/style_fix.dart';
-import 'package:dart_polisher/src/constants.dart';
+import 'package:dart_polisher/src/dp_constants.dart';
 
 void defineFormatOptions(ArgParser parser, {bool verbose = false})
 {
@@ -69,7 +69,7 @@ void defineFormatOptions(ArgParser parser, {bool verbose = false})
     parser.addOption('line-length',
         abbr: 'l',
         help: 'Wrap lines longer than this.',
-        defaultsTo: DEFAULT_PAGEWIDTH.toString());
+        defaultsTo: DefaultValue.DEFAULT_PAGEWIDTH.toString());
 
     parser.addOption('indent',
         abbr: 'i',

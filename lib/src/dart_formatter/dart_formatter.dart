@@ -15,7 +15,7 @@ import 'package:analyzer/error/error.dart';
 import 'package:analyzer/src/dart/scanner/scanner.dart';
 // ignore: implementation_imports
 import 'package:analyzer/src/string_source.dart';
-import 'package:dart_polisher/src/constants.dart';
+import 'package:dart_polisher/src/dp_constants.dart';
 import 'package:dart_polisher/src/dart_formatter/dart_formatter_options.dart';
 import 'package:pub_semver/pub_semver.dart';
 
@@ -62,7 +62,7 @@ class DartFormatter
     /// While formatting, also applies any of the given [fixes].
     DartFormatter.old(this.options,
         {this.lineEnding, int? pageWidth, int? indent, Iterable<StyleFix>? fixes})
-        : pageWidth = pageWidth ?? DEFAULT_PAGEWIDTH,
+        : pageWidth = pageWidth ?? DefaultValue.DEFAULT_PAGEWIDTH,
           indent = indent ?? 0,
           fixes = {...?fixes};
 
