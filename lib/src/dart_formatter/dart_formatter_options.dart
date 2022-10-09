@@ -121,7 +121,8 @@ class CodeIndent
         {this.block = DefaultValue.DEFAULT_BLOCK_INDENT,
         this.cascade = DefaultValue.DEFAULT_CASCADE_INDENT,
         this.expression = DefaultValue.DEFAULT_EXPRESSION_INDENT,
-        this.constructorInitializer = DefaultValue.DEFAULT_CONSTRUCTOR_INITIALIZER_INDENT});
+        this.constructorInitializer =
+            DefaultValue.DEFAULT_CONSTRUCTOR_INITIALIZER_INDENT});
 
     // If a parameter is ommited or null a default value is assigned.
     const CodeIndent.opt(
@@ -129,8 +130,8 @@ class CodeIndent
         : block = block ?? DefaultValue.DEFAULT_BLOCK_INDENT,
           cascade = cascade ?? DefaultValue.DEFAULT_CASCADE_INDENT,
           expression = expression ?? DefaultValue.DEFAULT_EXPRESSION_INDENT,
-          constructorInitializer =
-              constructorInitializer ?? DefaultValue.DEFAULT_CONSTRUCTOR_INITIALIZER_INDENT;
+          constructorInitializer = constructorInitializer ??
+              DefaultValue.DEFAULT_CONSTRUCTOR_INITIALIZER_INDENT;
 }
 
 /// Options that control how the code will be formattend

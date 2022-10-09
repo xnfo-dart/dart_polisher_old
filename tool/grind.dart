@@ -192,8 +192,7 @@ Future<void> bump() async
     // Update the version constants in formatter_constants.dart.
     var versionFile = getFile('lib/src/dp_constants.dart');
     var versionSource = versionFile.readAsStringSync();
-    var versionReplaced =
-        updateVersionConstant(versionSource, "VERSION", bumped);
+    var versionReplaced = updateVersionConstant(versionSource, "VERSION", bumped);
     // Update the version dependencies in dp_constants.dart.
     var dartStyleVersion = await getDependancyVersion("dart_style");
     if (dartStyleVersion != null)
