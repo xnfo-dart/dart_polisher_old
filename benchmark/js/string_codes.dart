@@ -935,8 +935,6 @@ void _validateSdkConstraint(Pubspec pubspec) {
 }
 """;
 
-
-
 /// Uses dart_style (vs 2.2.4) with tabSize 4.
 const String after =
     r"""// Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file

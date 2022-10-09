@@ -15,8 +15,7 @@ class CLIRunner<T> extends CommandRunner<T>
         {
             if (topLevelResults['version'])
             {
-                print("Formatter version: $DPConst.VERSION"
-                    " (based on dart_style: $DPConst.FORKED_FROM_DART_STYLE_VERSION)");
+                print(DPConst.VERSION_STRING);
                 return null;
             }
         }

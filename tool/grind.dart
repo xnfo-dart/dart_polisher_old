@@ -118,7 +118,8 @@ Future<void> node() async
 
         var dart2jsBenOutput = tempFile.readAsStringSync();
         Directory(out).createSync(recursive: true);
-        File('$out/bench.js').writeAsStringSync('${preamble.getPreamble()}$dart2jsBenOutput');
+        File('$out/bench.js')
+            .writeAsStringSync('${preamble.getPreamble()}$dart2jsBenOutput');
     }
 
     File('$out/package.json')
@@ -148,18 +149,22 @@ Future<void> node() async
 ///      already be the case since you've already landed patches that change
 ///      the formatter and bumped to that as a consequence.
 ///
-///   2. Run this task:
+///   2. Commit the change to develop and Tag it for candidate to release: vX.X.X-betaY.
 ///
-///         dart run grinder bump
+///   3. Merge to master
 ///
-///   3. Commit the change to a branch.
+///      git merge --no-commit <BETA_TAG>
+///      dart run grinder bump
+///      git commit -a
+///         Version $THE_VERSION_BEING_BUMPED
+///         Merge commit '#DEV_HASH_TO_BASE_RELEASE_OFF' into master
 ///
 ///   4. Tag the commit:
 ///
 ///         git tag -a "<version>" -m "<version>"
 ///         git push origin <version>
 ///
-///   5. Publish the package:
+///   5. Publish the package: (not for now)
 ///
 ///         pub lish
 @Task()
@@ -185,11 +190,11 @@ Future<void> bump() async
     pubspecFile.writeAsStringSync(pubspec);
 
     // Update the version constants in formatter_constants.dart.
-    var versionFile = getFile('lib/src/formatter_constants.dart');
+    var versionFile = getFile('lib/src/dp_constants.dart');
     var versionSource = versionFile.readAsStringSync();
     var versionReplaced =
-        updateVersionConstant(versionSource, "FORMATTER_VERSION", bumped);
-    // Update the version constants dependencys in formatter_constants.dart.
+        updateVersionConstant(versionSource, "VERSION", bumped);
+    // Update the version dependencies in dp_constants.dart.
     var dartStyleVersion = await getDependancyVersion("dart_style");
     if (dartStyleVersion != null)
     {
@@ -200,6 +205,7 @@ Future<void> bump() async
     versionFile.writeAsStringSync(versionReplaced);
 
     // Update the version in the CHANGELOG.
+    // TODO(tekert): create bump header and move Unreleased header
     var changelogFile = getFile('CHANGELOG.md');
     var changelog = changelogFile
         .readAsStringSync()
