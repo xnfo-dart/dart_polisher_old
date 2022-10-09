@@ -1,8 +1,8 @@
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:dart_polisher/src/cli/commands/dartstyle_command.dart';
-import 'package:dart_polisher/src/cli/commands/formatter_command.dart';
-import 'package:dart_polisher/src/constants.dart';
+import 'package:dart_polisher/src/cli/commands/format_command.dart';
+import 'package:dart_polisher/src/dp_constants.dart';
 
 class CLIRunner<T> extends CommandRunner<T>
 {
@@ -15,8 +15,7 @@ class CLIRunner<T> extends CommandRunner<T>
         {
             if (topLevelResults['version'])
             {
-                print("Formatter version: $VERSION"
-                    " (based on dart_style: $FORKED_FROM_DART_STYLE_VERSION)");
+                print(DPConst.VERSION_STRING);
                 return null;
             }
         }

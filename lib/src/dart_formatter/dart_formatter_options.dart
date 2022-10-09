@@ -1,15 +1,15 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:dart_polisher/src/dart_formatter/style_fix.dart';
-import 'package:dart_polisher/src/constants.dart';
+import 'package:dart_polisher/src/dp_constants.dart';
 import 'package:dart_polisher/src/dart_formatter/utils/bitmasks.dart';
 
 /// Styles can have each different tab modes and indents.
 enum CodeStyle {
-    DartStyle("Dart  Style", "Google 'dart' style [custom tab indents & mode]", 0, 0),
+    DartStyle("Dart  Style", "Google 'dart' style [custom tab indents & tab mode]", 0, 0),
     ExpandedStyle(
         "ExpandedSetyle",
-        "dart_style with outer braces on block nodes",
+        "dart_style with outer braces on block-like nodes",
         1,
         BodyOpt.outerBracesOnBlockLike |
             BodyOpt.outerBracesOnEnumSmart |
@@ -18,6 +18,14 @@ enum CodeStyle {
     style2("**", "****", 2, 0),
     style3(".", "...", 3, 0),
     ;
+
+    /// Get the enum corresponding to [styleCode],
+    /// returns the default enum if there is no match or if [styleCode] is null.
+    static CodeStyle getEnum(int? styleCode)
+    {
+        return CodeStyle.values.firstWhere((element) => element.styleCode == styleCode,
+            orElse: () => CodeStyle.DartStyle);
+    }
 
     const CodeStyle(this.styleName, this.styleDescription, this.styleCode, this.mask);
 
@@ -108,21 +116,22 @@ class CodeIndent
     /// The ":" on a wrapped constructor initialization list.
     final int constructorInitializer;
 
-    // If a parameter is ommited a default value is asigned.
+    // If a parameter is ommited a default value is assigned.
     const CodeIndent(
-        {this.block = DEFAULT_BLOCK_INDENT,
-        this.cascade = DEFAULT_CASCADE_INDENT,
-        this.expression = DEFAULT_EXPRESSION_INDENT,
-        this.constructorInitializer = DEFAULT_CONSTRUCTOR_INITIALIZER_INDENT});
+        {this.block = DefaultValue.DEFAULT_BLOCK_INDENT,
+        this.cascade = DefaultValue.DEFAULT_CASCADE_INDENT,
+        this.expression = DefaultValue.DEFAULT_EXPRESSION_INDENT,
+        this.constructorInitializer =
+            DefaultValue.DEFAULT_CONSTRUCTOR_INITIALIZER_INDENT});
 
-    // If a parameter is ommited or null a default value is asigned.
+    // If a parameter is ommited or null a default value is assigned.
     const CodeIndent.opt(
         {int? block, int? cascade, int? expression, int? constructorInitializer})
-        : block = block ?? DEFAULT_BLOCK_INDENT,
-          cascade = cascade ?? DEFAULT_CASCADE_INDENT,
-          expression = expression ?? DEFAULT_EXPRESSION_INDENT,
-          constructorInitializer =
-              constructorInitializer ?? DEFAULT_CONSTRUCTOR_INITIALIZER_INDENT;
+        : block = block ?? DefaultValue.DEFAULT_BLOCK_INDENT,
+          cascade = cascade ?? DefaultValue.DEFAULT_CASCADE_INDENT,
+          expression = expression ?? DefaultValue.DEFAULT_EXPRESSION_INDENT,
+          constructorInitializer = constructorInitializer ??
+              DefaultValue.DEFAULT_CONSTRUCTOR_INITIALIZER_INDENT;
 }
 
 /// Options that control how the code will be formattend
@@ -161,12 +170,13 @@ class FormatterOptions
     const FormatterOptions(
         {this.lineEnding,
         this.indent = 0,
-        this.pageWidth = DEFAULT_PAGEWIDTH,
-        this.insertSpaces = DEFAULT_INSERTSPACES,
-        this.style = DEFAULT_STYLE,
+        this.pageWidth = DefaultValue.DEFAULT_PAGEWIDTH,
+        this.insertSpaces = DefaultValue.DEFAULT_INSERTSPACES,
+        this.style = DefaultValue.DEFAULT_STYLE,
         this.fixes = const {},
         this.tabSizes = const CodeIndent()});
 
+    /// Accepts null values.
     const FormatterOptions.opt(
         {this.lineEnding,
         int? indent,
@@ -176,9 +186,9 @@ class FormatterOptions
         Set<StyleFix>? fixes,
         CodeIndent? tabSizes})
         : indent = indent ?? 0,
-          pageWidth = pageWidth ?? DEFAULT_PAGEWIDTH,
-          insertSpaces = insertSpaces ?? DEFAULT_INSERTSPACES,
-          style = style ?? DEFAULT_STYLE,
+          pageWidth = pageWidth ?? DefaultValue.DEFAULT_PAGEWIDTH,
+          insertSpaces = insertSpaces ?? DefaultValue.DEFAULT_INSERTSPACES,
+          style = style ?? DefaultValue.DEFAULT_STYLE,
           fixes = fixes ?? const {},
           tabSizes = tabSizes ?? const CodeIndent();
 }

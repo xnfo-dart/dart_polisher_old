@@ -44,8 +44,8 @@ void main(List<String> args)
         // the VM doesn't optimize "dead" code away.
         if (result != expected)
         {
-            //print('Incorrect output:\n$result');
-            //exit(1);
+            print('Incorrect output:\n$result');
+            exit(1);
         }
 
         // Don't print the first run. It's always terrible since the VM hasn't
@@ -80,7 +80,8 @@ String padLeft(input, int length)
     return result;
 }
 
-final opt = FormatterOptions(tabSizes: CodeIndent(cascade: 4));
+// after.dart.txt uses Style 1 with default 4 spaces indentation.
+final opt = FormatterOptions(style: CodeStyle.ExpandedStyle, tabSizes: CodeIndent());
 
 String formatSource()
 {

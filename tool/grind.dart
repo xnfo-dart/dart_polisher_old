@@ -2,6 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:grinder/grinder.dart';
@@ -9,6 +10,8 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml/yaml.dart' as yaml;
 import 'package:package_config/package_config.dart';
 import 'package:path/path.dart' as p;
+
+import "package:node_preamble/preamble.dart" as preamble;
 
 /// Matches the version line in dart_style's pubspec.
 final _versionPattern = RegExp(r'^version: .*$', multiLine: true);
@@ -20,20 +23,122 @@ void main(List<String> args) => grind(args);
 Future<void> validate() async
 {
     // Test it.
-    //await TestRunner().testAsync();
+    await TestRunner().testAsync();
 
     // Make sure it's warning clean.
     Analyzer.analyze('bin/format.dart', fatalWarnings: true);
 
-    // Format it.
-    Dart.run('bin/format.dart',
-        arguments: ['format', './benchmark/after.dart.txt', '-o', 'none']);
+    // Format project.
+    Dart.run('bin/format.dart', arguments: ["format", ".", "-s", "1", "-l", "90"]);
 
-    // Check if we can get parse all dependencys versions used as constants.
+    // Check if we can get parse all dependencies versions used as constants.
     if (await getDependancyVersion("dart_style") == null)
     {
-        throw "Cant parse all dependencys versions";
+        throw "Cant parse all dependencies versions";
     }
+}
+
+@Task()
+Future<void> validateCI() async
+{
+    // Test it.
+    await TestRunner().testAsync();
+
+    // Make sure it's warning clean.
+    Analyzer.analyze('bin/format.dart', fatalWarnings: true);
+
+    // Style is applied when bumping.
+}
+
+@Task('Compile to native, use --output=filename')
+@Depends(validateCI)
+Future<void> build() async
+{
+    TaskArgs args = context.invocation.arguments;
+    var outName = args.getOption("output");
+    var verbose = !args.getFlag("quiet");
+
+    // Get pubspec executable targets names
+    var pubspecFile = getFile('pubspec.yaml');
+    var pubspec = pubspecFile.readAsStringSync();
+    var pubspecMap = yaml.loadYaml(pubspec) as yaml.YamlMap;
+    var pubspecExecutables = pubspecMap["executables"] as yaml.YamlMap;
+    var defaultOutName = pubspecExecutables.keys
+        .firstWhere((k) => pubspecExecutables[k] == 'format', orElse: () => null);
+    // Use default name from pubspec if not given
+    outName ??= defaultOutName;
+
+    // Setup file output to compile
+    FilePath(buildDir).createDirectory();
+    var outFile = joinFile(buildDir, [outName!]);
+    var binFile = joinFile(binDir, ["format.dart"]);
+
+    // There should be a Dart Compile method but there is not, so we run it manually.
+    // (dart compile "-v" flag is not in help messages)
+    run(dartVM.path,
+        arguments: [
+            "compile",
+            "exe",
+            binFile.path,
+            "-o",
+            outFile.path,
+            verbose ? "-v" : "--verbosity=error"
+        ],
+        quiet: !verbose);
+}
+
+@Task('Compile to node js')
+Future<void> node() async
+{
+    TaskArgs args = context.invocation.arguments;
+    var bench = args.getFlag("benchmark");
+
+    var out = 'build/node';
+
+    var pubspecFile = getFile('pubspec.yaml');
+    var pubspec = pubspecFile.readAsStringSync();
+    var pubspecMap = yaml.loadYaml(pubspec) as Map;
+    var repository = pubspecMap['repository'];
+
+    var fileName = 'index.js';
+
+    var outFile = File('$out/$fileName');
+    Directory(out).createSync(recursive: true);
+    Dart2js.compile(File('tool/node_format_service.dart'), outFile: outFile);
+
+    var dart2jsOutput = outFile.readAsStringSync();
+    outFile.writeAsStringSync('${preamble.getPreamble()}$dart2jsOutput');
+
+    // Benchmark Test
+    // 10x slower than Dart :(
+    if (bench)
+    {
+        var tempFile = File('${Directory.systemTemp.path}/dart_polish_bench.js');
+        Dart2js.compile(File('benchmark/js/benchmark_js.dart'), outFile: tempFile);
+
+        var dart2jsBenOutput = tempFile.readAsStringSync();
+        Directory(out).createSync(recursive: true);
+        File('$out/bench.js')
+            .writeAsStringSync('${preamble.getPreamble()}$dart2jsBenOutput');
+    }
+
+    File('$out/package.json')
+        .writeAsStringSync(const JsonEncoder.withIndent('  ').convert({
+        'name': 'dart-polisher',
+        'version': pubspecMap['version'],
+        'description': pubspecMap['description'],
+        'main': fileName,
+        'typings': 'dart-polisher.d.ts',
+        'scripts': {'test': 'echo "Error: no test specified" && exit 1'},
+        'repository': {'type': 'git', 'url': 'git+$repository'},
+        'author': 'xnfo',
+        'license': 'BSD',
+        'bugs': {'url': '$repository/issues'},
+        'homepage': repository
+    }));
+    //run('npm', arguments: ['publish', out]);
+
+    log("Package for node had been created in: ${Directory(out).absolute}");
 }
 
 /// Gets ready to publish a new version of the package.
@@ -44,26 +149,22 @@ Future<void> validate() async
 ///      already be the case since you've already landed patches that change
 ///      the formatter and bumped to that as a consequence.
 ///
-///   2. Run this task:
+///   2. Commit the change to develop and Tag it for candidate to release: vX.X.X-betaY.
 ///
-///         dart run grinder bump
+///   3. Merge to master
 ///
-///   3. Commit the change to a branch.
+///      git merge --no-commit <BETA_TAG>
+///      dart run grinder bump
+///      git commit -a
+///         Version $THE_VERSION_BEING_BUMPED
+///         Merge commit '#DEV_HASH_TO_BASE_RELEASE_OFF' into master
 ///
-///   4. Send it out for review:
-///
-///         git cl upload
-///
-///   5. After the review is complete, land it:
-///
-///         git cl land
-///
-///   6. Tag the commit:
+///   4. Tag the commit:
 ///
 ///         git tag -a "<version>" -m "<version>"
 ///         git push origin <version>
 ///
-///   7. Publish the package:
+///   5. Publish the package: (not for now)
 ///
 ///         pub lish
 @Task()
@@ -89,11 +190,10 @@ Future<void> bump() async
     pubspecFile.writeAsStringSync(pubspec);
 
     // Update the version constants in formatter_constants.dart.
-    var versionFile = getFile('lib/src/formatter_constants.dart');
+    var versionFile = getFile('lib/src/dp_constants.dart');
     var versionSource = versionFile.readAsStringSync();
-    var versionReplaced =
-        updateVersionConstant(versionSource, "FORMATTER_VERSION", bumped);
-    // Update the version constants dependencys in formatter_constants.dart.
+    var versionReplaced = updateVersionConstant(versionSource, "VERSION", bumped);
+    // Update the version dependencies in dp_constants.dart.
     var dartStyleVersion = await getDependancyVersion("dart_style");
     if (dartStyleVersion != null)
     {
@@ -104,6 +204,7 @@ Future<void> bump() async
     versionFile.writeAsStringSync(versionReplaced);
 
     // Update the version in the CHANGELOG.
+    // TODO(tekert): create bump header and move Unreleased header
     var changelogFile = getFile('CHANGELOG.md');
     var changelog = changelogFile
         .readAsStringSync()

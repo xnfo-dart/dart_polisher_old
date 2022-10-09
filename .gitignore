@@ -4,13 +4,14 @@
 
 # Conventional directory for build output.
 build/
+coverage/
+tool/genhtml.perl
 
 .vscode/
 *.dart1
 *.dill
 
 /benchmark/debug.txt
-/tool/protocol_spec/generated/**
 
 /bin/**
 !/bin/format.dart

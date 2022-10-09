@@ -15,6 +15,7 @@ import 'package:analyzer/error/error.dart';
 import 'package:analyzer/src/dart/scanner/scanner.dart';
 // ignore: implementation_imports
 import 'package:analyzer/src/string_source.dart';
+import 'package:dart_polisher/src/dp_constants.dart';
 import 'package:dart_polisher/src/dart_formatter/dart_formatter_options.dart';
 import 'package:pub_semver/pub_semver.dart';
 
@@ -61,12 +62,13 @@ class DartFormatter
     /// While formatting, also applies any of the given [fixes].
     DartFormatter.old(this.options,
         {this.lineEnding, int? pageWidth, int? indent, Iterable<StyleFix>? fixes})
-        : pageWidth = pageWidth ?? 95,
+        : pageWidth = pageWidth ?? DefaultValue.DEFAULT_PAGEWIDTH,
           indent = indent ?? 0,
           fixes = {...?fixes};
-    // TODO (tekert): remove this.[fixes, indent, pageWidth, lineEnding] redundant options after refactor
-    DartFormatter(this.options)
-        : fixes = options.fixes,
+
+    DartFormatter([this.options = const FormatterOptions()])
+        : // TODO (tekert): remove this.[fixes, indent, pageWidth, lineEnding] redundant options after refactor
+          fixes = options.fixes,
           indent = options.indent,
           pageWidth = options.pageWidth,
           lineEnding = options.lineEnding;
