@@ -4,9 +4,9 @@
 ## [Unreleased]
 
 
-## [0.9.2] - 1/10/2022
+## [0.9.2] - 10/10/2022
 - `DartFormatter` constructor argument: `FormatterOptions` argument its now optional.
-- Updated analizer lib.
+- Updated analyzer lib.
 - Ported tests.
 - Javascript build target. `dart run grinder node`
 - Build task. `dart run grinder build --output=filename`
