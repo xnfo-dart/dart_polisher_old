@@ -70,6 +70,7 @@ void defineFormatOptions(ArgParser parser, {bool verbose = false})
         abbr: 'l',
         help: 'Wrap lines longer than this.',
         defaultsTo: DefaultValue.DEFAULT_PAGEWIDTH.toString());
+    // Don't hide this...
 
     parser.addOption('indent',
         abbr: 'i',

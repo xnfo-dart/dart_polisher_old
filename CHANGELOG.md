@@ -3,6 +3,8 @@
 
 ## [Unreleased]
 
+### Upstream fixes
+* Format unnamed libraries.
 
 ## [0.9.2] - 10/10/2022
 - `DartFormatter` constructor argument: `FormatterOptions` argument its now optional.
