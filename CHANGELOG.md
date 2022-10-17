@@ -6,6 +6,9 @@
 ### Upstream fixes
 * Format unnamed libraries.
 
+### Fixes
+- Grinder build task now accepts relative paths (builds are still relative to ./build dir)
+
 ## [0.9.2] - 10/10/2022
 - `DartFormatter` constructor argument: `FormatterOptions` argument its now optional.
 - Updated analyzer lib.

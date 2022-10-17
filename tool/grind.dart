@@ -58,6 +58,13 @@ Future<void> build() async
     var outName = args.getOption("output");
     var verbose = !args.getFlag("quiet");
 
+    // Get base normalized output Dir and File name from input.
+    var outPath = FilePath(outName);
+    if (outPath.parent != null) outName = outPath.name;
+    var basePath = outPath.parent?.path ?? "";
+    var outDirPath = p.normalize(joinDir(buildDir, [basePath]).path);
+    var outDir = getDir(outDirPath);
+
     // Get pubspec executable targets names
     var pubspecFile = getFile('pubspec.yaml');
     var pubspec = pubspecFile.readAsStringSync();
@@ -69,8 +76,8 @@ Future<void> build() async
     outName ??= defaultOutName;
 
     // Setup file output to compile
-    FilePath(buildDir).createDirectory();
-    var outFile = joinFile(buildDir, [outName!]);
+    FilePath(outDir).createDirectory(recursive: true);
+    var outFile = joinFile(outDir, [outName!]);
     var binFile = joinFile(binDir, ["format.dart"]);
 
     // There should be a Dart Compile method but there is not, so we run it manually.
