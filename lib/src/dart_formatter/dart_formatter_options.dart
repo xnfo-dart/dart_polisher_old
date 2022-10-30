@@ -6,9 +6,9 @@ import 'package:dart_polisher/src/dart_formatter/utils/bitmasks.dart';
 
 /// Styles can have each different tab modes and indents.
 enum CodeStyle {
-    DartStyle("Dart  Style", "Google 'dart' style [custom tab indents & tab mode]", 0, 0),
+    DartStyle("Dart Style", "Google 'dart' style [custom tab indents & tab mode]", 0, 0),
     ExpandedStyle(
-        "ExpandedSetyle",
+        "Expanded",
         "dart_style with outer braces on block-like nodes",
         1,
         BodyOpt.outerBracesOnBlockLike |
@@ -19,19 +19,37 @@ enum CodeStyle {
     style3(".", "...", 3, 0),
     ;
 
-    /// Get the enum corresponding to [styleCode],
-    /// returns the default enum if there is no match or if [styleCode] is null.
-    static CodeStyle getEnum(int? styleCode)
+    /// Get the enum matching the style [code],
+    /// returns the default enum if there is no match or if [code] is null.
+    static CodeStyle getStyleFromCode(int? code)
     {
-        return CodeStyle.values.firstWhere((element) => element.styleCode == styleCode,
+        return CodeStyle.values.firstWhere((element) => element.code == code,
             orElse: () => CodeStyle.DartStyle);
     }
 
-    const CodeStyle(this.styleName, this.styleDescription, this.styleCode, this.mask);
+    /// Get the enum matching the style [code],
+    /// returns the default enum if there is no match or if [code] is null.
+    // TODO(tekert): Remove in version 1.0.0
+    @Deprecated("Use getStyleFromCode instead, getEnum will be removed in the next mayor version")
+    static CodeStyle getEnum(int? code)
+    {
+        return CodeStyle.values.firstWhere((element) => element.code == code,
+            orElse: () => CodeStyle.DartStyle);
+    }
 
-    final String styleName;
-    final String styleDescription;
-    final int styleCode;
+    /// Get the first enum matching the style [name],
+    /// returns the default enum if there is no match or if [name] is null.
+    static CodeStyle getStyleFromName(String? name)
+    {
+        return CodeStyle.values.firstWhere((element) => element.name == name,
+            orElse: () => CodeStyle.DartStyle);
+    }
+
+    const CodeStyle(this.name, this.description, this.code, this.mask);
+
+    final String name;
+    final String description;
+    final int code;
     final int mask;
 }
 
@@ -79,7 +97,7 @@ class BodyOpt
     /// true means split '{' if contents split, remain folded if not.
     /// same case with collection literals, looks better if its folded.
     /// that way it can be better distinguished between block-like nodes.
-    // TODO (tekert): check if it looks good.
+    // TODO (tekert): not implemented yet, check if it looks good.
     static const int outerBracesOnEnumSmart = CompatibleBits.bit3;
 
     // The stataments that follow a '}' like: else/else if/catch/on/finally
