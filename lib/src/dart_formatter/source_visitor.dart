@@ -447,7 +447,7 @@ class SourceVisitor extends ThrowingAstVisitor
     void visitBlockFunctionBody(BlockFunctionBody node)
     {
         // Space after the parameter list.
-        space(); //TODO (tekert): on outer braces, the space is not needed. if (node.keyword == null)
+        space(); //TODO (tekert): on outer braces, the space is not needed if (node.keyword == null)
 
         // The "async" or "sync" keyword.
         token(node.keyword);
@@ -455,7 +455,7 @@ class SourceVisitor extends ThrowingAstVisitor
         // The "*" in "async*" or "sync*".
         token(node.star);
         if (node.keyword != null)
-            space(); //TODO (tekert): on outer braces, the space is not needed.
+            space(); //TODO (tekert): on outer braces, the final space is not needed.
 
         visit(node.block);
     }
