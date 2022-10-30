@@ -7,13 +7,21 @@ build/
 coverage/
 tool/genhtml.perl
 
-.vscode/
+# Debug files
+/bin/**
+!/bin/format.dart
+/benchmark/debug.txt
 *.dart1
 *.dill
 
-/benchmark/debug.txt
+# vscode not necessarily needed for dart projects.
+.vscode/
 
-/bin/**
-!/bin/format.dart
+# Dart2js output 'dart run grinder node' except ts typings
+/dist/**
+!/dist/node/
+!/dist/node/dart-polisher.d.ts
+!/dist/node/.gitignore
 
+# Don't lock versions when importing package
 pubspec.lock

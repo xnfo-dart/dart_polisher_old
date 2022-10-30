@@ -1,3 +1,6 @@
+// The code was taken from dart_style package and modified by Xnfo.
+// The dart_style package copyright notice is as follows:
+//
 // Copyright (c) 2015, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
@@ -94,27 +97,34 @@ Future<void> build() async
         quiet: !verbose);
 }
 
-@Task('Compile to node js')
+@Task('Compile to Node.js project')
 Future<void> node() async
 {
     TaskArgs args = context.invocation.arguments;
     var bench = args.getFlag("benchmark");
+    var esExport = args.getFlag("es-export"); // default is commonjs export.
 
-    var out = 'build/node';
+    var out = FilePath("dist").join("node");
+    out.createDirectory(recursive: true);
+    var fileName = "index.js";
 
-    var pubspecFile = getFile('pubspec.yaml');
+    var pubspecFile = getFile("pubspec.yaml");
     var pubspec = pubspecFile.readAsStringSync();
     var pubspecMap = yaml.loadYaml(pubspec) as Map;
-    var repository = pubspecMap['repository'];
+    var repository = pubspecMap["repository"];
 
-    var fileName = 'index.js';
-
-    var outFile = File('$out/$fileName');
-    Directory(out).createSync(recursive: true);
-    Dart2js.compile(File('tool/node_format_service.dart'), outFile: outFile);
+    var outFile = out.join(fileName).asFile;
+    Dart2js.compile(File("tool/js_format_service.dart"), outFile: outFile);
 
     var dart2jsOutput = outFile.readAsStringSync();
-    outFile.writeAsStringSync('${preamble.getPreamble()}$dart2jsOutput');
+    // ES export not needed except when using raw file import from ts.
+    String moduleExport = esExport ? "export const JSDartPolisher = exports;\n" : "";
+    // Fix for self https://github.com/sass/dart-sass/issues/621
+    var nodePreamble = preamble.getPreamble();
+    var replace = "var self = Object.create(dartNodePreambleSelf);";
+    nodePreamble = nodePreamble.replaceFirst(
+        replace, "//! $replace\nvar self = dartNodePreambleSelf;");
+    outFile.writeAsStringSync('$moduleExport$nodePreamble$dart2jsOutput');
 
     // Benchmark Test
     // 10x slower than Dart :(
@@ -124,7 +134,6 @@ Future<void> node() async
         Dart2js.compile(File('benchmark/js/benchmark_js.dart'), outFile: tempFile);
 
         var dart2jsBenOutput = tempFile.readAsStringSync();
-        Directory(out).createSync(recursive: true);
         File('$out/bench.js')
             .writeAsStringSync('${preamble.getPreamble()}$dart2jsBenOutput');
     }
@@ -133,19 +142,22 @@ Future<void> node() async
         .writeAsStringSync(const JsonEncoder.withIndent('  ').convert({
         'name': 'dart-polisher',
         'version': pubspecMap['version'],
-        'description': pubspecMap['description'],
+        'description': 'Customizable Dart source code formatter. '
+            'Transpiled to node.js from dart_polisher (forked from dart_style)',
         'main': fileName,
         'typings': 'dart-polisher.d.ts',
         'scripts': {'test': 'echo "Error: no test specified" && exit 1'},
-        'repository': {'type': 'git', 'url': 'git+$repository'},
+        'repository': {'type': 'git', 'url': '$repository.git'},
         'author': 'xnfo',
         'license': 'BSD',
         'bugs': {'url': '$repository/issues'},
         'homepage': repository
     }));
+
+    run('npm', arguments: ['pack', out.path, "--pack-destination", out.parent!.path]);
     //run('npm', arguments: ['publish', out]);
 
-    log("Package for node had been created in: ${Directory(out).absolute}");
+    log("Package for node had been created in: ${out.asDirectory.absolute}");
 }
 
 /// Gets ready to publish a new version of the package.
