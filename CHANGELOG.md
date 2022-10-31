@@ -4,10 +4,12 @@
 ## [Unreleased]
 
 ### New
-- Ability to export dart_polisher library to Node.js package (using Dart js compiler).  
-Typings for use in typescript. 
-Compile it with: `dart run grinder node`.  
-Note: It's not yet published, use resulting `'dist/node/dart-polisher-*.tgz'` file for manual import.
+- Ability to export library to Node.js `dart-polisher`  npm package.  
+Library created using Dart `js` compiler.  
+Typings for use in `typescript`.  
+Compile with grinder: `dart run grinder node` (use `--help` for more info).  
+Additional grinder node tools: `grinder benchmark` (10x times slower on avg using Dart 2.18).  
+Import it using npm: [dart-polisher](https://www.npmjs.com/package/dart-polisher), or file: `dist/node/dart-polisher-*.tgz`.
 
 ### Upstream fixes
 * Format unnamed libraries.
