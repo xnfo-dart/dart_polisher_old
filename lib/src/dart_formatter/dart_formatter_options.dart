@@ -30,7 +30,8 @@ enum CodeStyle {
     /// Get the enum matching the style [code],
     /// returns the default enum if there is no match or if [code] is null.
     // TODO(tekert): Remove in version 1.0.0
-    @Deprecated("Use getStyleFromCode instead, getEnum will be removed in the next mayor version")
+    @Deprecated("Use getStyleFromCode instead, "
+        "'getEnum' will be removed in the next mayor version")
     static CodeStyle getEnum(int? code)
     {
         return CodeStyle.values.firstWhere((element) => element.code == code,
@@ -53,7 +54,7 @@ enum CodeStyle {
     final int mask;
 }
 
-/// Class with bit values representing Formatting options for Body-like sintaxes
+/// Class with bit values representing Formatting options for Body-like sintaxis
 ///
 /// Its used to build bitmasks: bitmask = option1 | option2;
 ///
@@ -88,35 +89,27 @@ class BodyOpt
 
     /// Outer braces on collection literals
     /// If they split, they become difficult to distinguish between blocks and collections.
-    /// It's folded if it can fit inside linelengt and split if not.
+    /// It's folded if it can fit inside max line lenght and split if not.
     ///
     ///! NOT IMPLEMENTED.
     static const int outerBracesOnCollectionLiteralsSmart = CompatibleBits.bit2;
 
-    /// Enum is a specials case, can look good folded if it fits in lineLenght.
-    /// true means split '{' if contents split, remain folded if not.
-    /// same case with collection literals, looks better if its folded.
-    /// that way it can be better distinguished between block-like nodes.
+    /// Enum is a special case, can look good folded if it fits in max line lenght.
+    /// True means split '{' if contents split, remain folded if false.
+    /// Same case with collection literals, looks better if its folded.
+    /// That way it can be better distinguished between block-like nodes.
     // TODO (tekert): not implemented yet, check if it looks good.
     static const int outerBracesOnEnumSmart = CompatibleBits.bit3;
 
     // The stataments that follow a '}' like: else/else if/catch/on/finally
 
-    /// Puts clause within a [TryStatement] clause on newline
+    /// Puts clause within a [TryStatement] clause on newline.
     static const int outerTryStatementClause = CompatibleBits.bit4;
 
     /// Puts else [Statement]s on newline, uses space if not set.
     static const int outerIfStatementElse = CompatibleBits.bit5;
 
     const BodyOpt();
-
-    static int getExpandedBody()
-    {
-        return outerBracesOnBlockLike |
-            outerBracesOnEnumSmart |
-            outerTryStatementClause |
-            outerIfStatementElse;
-    }
 }
 
 /// Constants for the number of spaces in various kinds of indentation.

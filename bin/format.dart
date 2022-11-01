@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:dart_polisher/src/cli/commands/dartstyle_command.dart';
@@ -46,6 +48,7 @@ void main(List<String> args) async
     }
     on UsageException catch (err)
     {
-        print(err);
+        stderr.writeln(err);
+        exit(64);
     }
 }

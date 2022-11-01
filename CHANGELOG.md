@@ -4,7 +4,7 @@
 ## [Unreleased]
 
 ### New
-- Ability to export library to Node.js `dart-polisher`  npm package.  
+- Ability to export library to Node.js `dart-polisher` npm package.  
 Library created using Dart `js` compiler.  
 Typings for use in `typescript`.  
 Compile with grinder: `dart run grinder node` (use `--help` for more info).  

@@ -14,11 +14,11 @@
 
 class CompatibleBits
 {
-    /// The largest possbile unsigned integer that is valid in JavaScript.
+    /// The largest posible unsigned integer that is valid in JavaScript.
     static const MAXJSUINT = ALLBITSSET53;
     static const ALLBITSSET53 = 0x1fffffffffffff;
 
-    // Javascript shift operations works on 32 bit values only.
+    // JavaScript shift operations works on 32 bit values only.
     static const int bit1 = MAXJSUINT & 1 << 0;
     static const int bit2 = MAXJSUINT & 1 << 1;
     static const int bit3 = MAXJSUINT & 1 << 2;
@@ -54,7 +54,7 @@ class CompatibleBits
 
     // We can use exended bits until 53 bits are used.
     // shift is not working past 32 bits in javascript but
-    // we cant still use the precision bits.
+    // we can still use the precision bits.
     static const int bit33 = 0x100000000;
     static const int bit34 = 0x200000000;
     static const int bit35 = 0x400000000;
