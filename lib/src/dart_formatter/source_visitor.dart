@@ -2565,6 +2565,40 @@ class SourceVisitor extends ThrowingAstVisitor
     }
 
     @override
+    void visitObjectPattern(ObjectPattern node)
+    {
+        // Even though object patterns syntactically resemble constructor or
+        // function calls, we format them like collections (or like argument lists
+        // with trailing commas). In other words, like this:
+        //
+        //     case Foo(
+        //         first: 1,
+        //         second: 2,
+        //         third: 3
+        //       ):
+        //       body;
+        //
+        // Not like:
+        //
+        //     case Foo(
+        //           first: 1,
+        //           second: 2,
+        //           third: 3):
+        //       body;
+        //
+        // This is less consistent with the corresponding expression form, but is
+        // more consistent with all of the other delimited patterns -- list, map,
+        // and record -- which have collection-like formatting.
+        // TODO(rnystrom): If we move to consistently using collection-like
+        // formatting for all argument lists, then this will all be consistent and
+        // this comment should be removed.
+        visit(node.type);
+        //! CHANGED(tekert): add new parameter: node
+        _visitCollectionLiteral(
+            node.leftParenthesis, node.fields, node.rightParenthesis, node);
+    }
+
+    @override
     void visitOnClause(OnClause node)
     {
         _visitCombinator(node.onKeyword, node.superclassConstraints);
