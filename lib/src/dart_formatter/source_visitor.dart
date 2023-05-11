@@ -382,8 +382,6 @@ class SourceVisitor extends ThrowingAstVisitor
     @override
     void visitBinaryExpression(BinaryExpression node)
     {
-        builder.startSpan();
-
         // If a binary operator sequence appears immediately after a `=>`, don't
         // add an extra level of nesting. Instead, let the subsequent operands line
         // up with the first, as in:
@@ -392,91 +390,14 @@ class SourceVisitor extends ThrowingAstVisitor
         //         argument &&
         //         argument &&
         //         argument;
-        var isArrowBody = node.parent is ExpressionFunctionBody;
-        if (!isArrowBody) builder.nestExpression();
+        var nest = node.parent is! ExpressionFunctionBody;
 
-        // Start lazily so we don't force the operator to split if a line comment
-        // appears before the first operand.
-        builder.startLazyRule();
-
-        // Flatten out a tree/chain of the same precedence. If we need to split on
-        // any of them, we split on all of them.
-        var precedence = node.operator.type.precedence;
-
-        void traverse(Expression e)
-        {
-            if (e is BinaryExpression && e.operator.type.precedence == precedence)
-            {
-                traverse(e.leftOperand);
-
-                space();
-                token(e.operator);
-
-                split();
-                traverse(e.rightOperand);
-            }
-            else
-            {
-                visit(e);
-            }
-        }
-
-        // Blocks as operands to infix operators should always nest like regular
-        // operands. (Granted, this case is exceedingly rare in real code.)
-        builder.startBlockArgumentNesting();
-
-        traverse(node);
-
-        builder.endBlockArgumentNesting();
-
-        if (!isArrowBody) builder.unnest();
-        builder.endSpan();
-        builder.endRule();
-    }
-
-    @override
-    void visitBinaryPattern(BinaryPattern node)
-    {
-        builder.startSpan();
-        builder.nestExpression(now: true);
-
-        // Start lazily so we don't force the operator to split if a line comment
-        // appears before the first operand.
-        builder.startLazyRule();
-
-        // Flatten out a tree/chain of the same precedence. If we need to split on
-        // any of them, we split on all of them.
-        var precedence = node.operator.type.precedence;
-
-        void traverse(DartPattern p)
-        {
-            if (p is BinaryPattern && p.operator.type.precedence == precedence)
-            {
-                traverse(p.leftOperand);
-
-                space();
-                token(p.operator);
-
-                split();
-                traverse(p.rightOperand);
-            }
-            else
-            {
-                visit(p);
-            }
-        }
-
-        // Blocks as operands to infix patterns should always nest like regular
-        // operands.
-        builder.startBlockArgumentNesting();
-
-        traverse(node);
-
-        builder.endBlockArgumentNesting();
-
-        builder.unnest();
-        builder.endSpan();
-        builder.endRule();
+        _visitBinary<BinaryExpression>(
+            node,
+            precedence: node.operator.type.precedence,
+            nest: nest,
+            (expression) => BinaryNode(
+                expression.leftOperand, expression.operator, expression.rightOperand));
     }
 
     @override
@@ -1081,9 +1002,7 @@ class SourceVisitor extends ThrowingAstVisitor
     @override
     void visitDeclaredVariablePattern(DeclaredVariablePattern node)
     {
-        modifier(node.keyword);
-        visit(node.type, after: soloSplit);
-        token(node.name);
+        _visitVariablePattern(node.keyword, node.type, node.name);
     }
 
     @override
@@ -2405,6 +2324,24 @@ class SourceVisitor extends ThrowingAstVisitor
     }
 
     @override
+    void visitLogicalAndPattern(LogicalAndPattern node)
+    {
+        _visitBinary<LogicalAndPattern>(
+            node,
+            (pattern) =>
+                BinaryNode(pattern.leftOperand, pattern.operator, pattern.rightOperand));
+    }
+
+    @override
+    void visitLogicalOrPattern(LogicalOrPattern node)
+    {
+        _visitBinary<LogicalOrPattern>(
+            node,
+            (pattern) =>
+                BinaryNode(pattern.leftOperand, pattern.operator, pattern.rightOperand));
+    }
+
+    @override
     void visitMapLiteralEntry(MapLiteralEntry node)
     {
         builder.nestExpression();
@@ -2584,6 +2521,20 @@ class SourceVisitor extends ThrowingAstVisitor
     }
 
     @override
+    void visitNullAssertPattern(NullAssertPattern node)
+    {
+        visit(node.pattern);
+        token(node.operator);
+    }
+
+    @override
+    void visitNullCheckPattern(NullCheckPattern node)
+    {
+        visit(node.pattern);
+        token(node.operator);
+    }
+
+    @override
     void visitNullLiteral(NullLiteral node)
     {
         token(node.literal);
@@ -2687,6 +2638,32 @@ class SourceVisitor extends ThrowingAstVisitor
     }
 
     @override
+    void visitPatternField(PatternField node)
+    {
+        var fieldName = node.name;
+        if (fieldName != null)
+        {
+            var name = fieldName.name;
+            if (name != null)
+            {
+                visitNamedNode(fieldName.name!, fieldName.colon, node.pattern);
+            }
+            else
+            {
+                // Named field with inferred name, like:
+                //
+                //     var (:x) = (x: 1);
+                token(fieldName.colon);
+                visit(node.pattern);
+            }
+        }
+        else
+        {
+            visit(node.pattern);
+        }
+    }
+
+    @override
     void visitPatternVariableDeclaration(PatternVariableDeclaration node)
     {
         visitMetadata(node.metadata);
@@ -2708,13 +2685,6 @@ class SourceVisitor extends ThrowingAstVisitor
 
     @override
     void visitPostfixExpression(PostfixExpression node)
-    {
-        visit(node.operand);
-        token(node.operator);
-    }
-
-    @override
-    void visitPostfixPattern(PostfixPattern node)
     {
         visit(node.operand);
         token(node.operator);
@@ -2786,32 +2756,6 @@ class SourceVisitor extends ThrowingAstVisitor
         _visitCollectionLiteral(
             node.leftParenthesis, node.fields, node.rightParenthesis, node,
             isRecord: true);
-    }
-
-    @override
-    void visitRecordPatternField(RecordPatternField node)
-    {
-        var fieldName = node.fieldName;
-        if (fieldName != null)
-        {
-            var name = fieldName.name;
-            if (name != null)
-            {
-                visitNamedNode(fieldName.name!, fieldName.colon, node.pattern);
-            }
-            else
-            {
-                // Named field with inferred name, like:
-                //
-                //     var (:x) = (x: 1);
-                token(fieldName.colon);
-                visit(node.pattern);
-            }
-        }
-        else
-        {
-            visit(node.pattern);
-        }
     }
 
     @override
@@ -3464,6 +3408,12 @@ class SourceVisitor extends ThrowingAstVisitor
     }
 
     @override
+    void visitWildcardPattern(WildcardPattern node)
+    {
+        _visitVariablePattern(node.keyword, node.type, node.name);
+    }
+
+    @override
     void visitWithClause(WithClause node)
     {
         _visitCombinator(node.withKeyword, node.mixinTypes);
@@ -3615,6 +3565,74 @@ class SourceVisitor extends ThrowingAstVisitor
         if (nest) builder.unnest();
     }
 
+    /// Visits an infix operator-like AST node: a binary operator expression, or
+    /// binary pattern.
+    ///
+    /// In a tree of binary AST nodes, all operators at the same precedence are
+    /// treated as a single chain of operators that either all split or none do.
+    /// Operands within those (which may themselves be chains of higher
+    /// precedence binary operators) are then formatted independently.
+    ///
+    /// [T] is the type of node being visited and [destructureNode] is a callback
+    /// that takes one of those and yields the operands and operator. We need
+    /// this since there's no interface shared by the various binary operator
+    /// AST nodes.
+    ///
+    /// If [precedence] is given, then only flattens binary nodes with that same
+    /// precedence. If [nest] is `false`, then elides the nesting around the
+    /// expression.
+    void _visitBinary<T extends AstNode>(
+        T node, BinaryNode Function(T node) destructureNode,
+        {int? precedence, bool nest = true})
+    {
+        builder.startSpan();
+
+        if (nest) builder.nestExpression();
+
+        // Start lazily so we don't force the operator to split if a line comment
+        // appears before the first operand.
+        builder.startLazyRule();
+
+        // Blocks as operands to infix operators should always nest like regular
+        // operands. (Granted, this case is exceedingly rare in real code.)
+        builder.startBlockArgumentNesting();
+
+        void traverse(AstNode e)
+        {
+            if (e is! T)
+            {
+                visit(e);
+            }
+            else
+            {
+                var binary = destructureNode(e);
+                if (precedence != null && binary.operator.type.precedence != precedence)
+                {
+                    // Binary node, but a different precedence, so don't flatten.
+                    visit(e);
+                }
+                else
+                {
+                    traverse(binary.left);
+
+                    space();
+                    token(binary.operator);
+
+                    split();
+                    traverse(binary.right);
+                }
+            }
+        }
+
+        traverse(node);
+
+        builder.endBlockArgumentNesting();
+
+        if (nest) builder.unnest();
+        builder.endSpan();
+        builder.endRule();
+    }
+
     /// Visits the "with" and "implements" clauses in a type declaration.
     void _visitClauses(WithClause? withClause, ImplementsClause? implementsClause)
     {
@@ -3701,6 +3719,14 @@ class SourceVisitor extends ThrowingAstVisitor
                 }
             }
         }
+    }
+
+    /// Visits a variable or wildcard pattern.
+    void _visitVariablePattern(Token? keyword, TypeAnnotation? type, Token name)
+    {
+        modifier(keyword);
+        visit(type, after: soloSplit);
+        token(name);
     }
 
     /// Visits a top-level function or method declaration.
@@ -4989,4 +5015,18 @@ class SourceVisitor extends ThrowingAstVisitor
 
     /// Gets the 1-based column number that the beginning of [token] lies on.
     int _startColumn(Token token) => _lineInfo.getLocation(token.offset).columnNumber;
+}
+
+/// Synthetic node for any kind of binary operator.
+///
+/// Used to share formatting logic between binary operators, logic operators,
+/// logic patterns, etc.
+// TODO: Remove this and just use a record when those are available.
+class BinaryNode
+{
+    final AstNode left;
+    final Token operator;
+    final AstNode right;
+
+    BinaryNode(this.left, this.operator, this.right);
 }
