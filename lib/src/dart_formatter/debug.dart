@@ -142,7 +142,23 @@ void dumpChunks(int start, List<Chunk> chunks)
             {
                 if (chunk.spans.contains(span))
                 {
-                    if (index == 0 || !chunks[index - 1].spans.contains(span))
+                    if (index == chunks.length - 1 ||
+                        !chunks[index + 1].spans.contains(span))
+                    {
+                        // This is the last chunk with the span.
+                        spanBars += '╙';
+                    }
+                    else
+                    {
+                        spanBars += '║';
+                    }
+                }
+                else
+                {
+                    // If the next chunk has this span, then show it bridging this chunk
+                    // and the next because a split between them breaks the span.
+                    if (index < chunks.length - 1 &&
+                        chunks[index + 1].spans.contains(span))
                     {
                         if (span.cost == 1)
                         {
@@ -153,25 +169,12 @@ void dumpChunks(int start, List<Chunk> chunks)
                             spanBars += span.cost.toString();
                         }
                     }
-                    else
-                    {
-                        spanBars += '║';
-                    }
-                }
-                else
-                {
-                    if (index > 0 && chunks[index - 1].spans.contains(span))
-                    {
-                        spanBars += '╙';
-                    }
-                    else
-                    {
-                        spanBars += ' ';
-                    }
                 }
             }
             row.add(spanBars);
         }
+
+        row.add(chunk.spans.map((span) => span.id).join(' '));
 
         if (chunk.text.length > 70)
         {
