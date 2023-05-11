@@ -9,7 +9,7 @@ environment:
   sdk: '>=2.18.0 <3.0.0'
 
 dependencies:
-  analyzer: '^5.2.0'
+  analyzer: '>=5.4.0 <=5.4.0'
   args: ^2.3.1
   dart_style: ^2.2.4
   path: ^1.8.2

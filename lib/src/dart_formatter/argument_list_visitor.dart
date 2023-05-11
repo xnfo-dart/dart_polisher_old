@@ -497,7 +497,7 @@ class ArgumentSublist
             visitor.beforeBlock(argumentBlock, blockRule, previousSplit);
         }
         else if (_allArguments.length > 1 || _allArguments.first is RecordLiteral)
-            //! TODO (tekert): change this to > 0, is an agument, causes confusion if is not indented.
+        //! TODO (tekert): change this to > 0, is an agument, causes confusion if is not indented.
         {
             // Edge case: Only bump the nesting if there are multiple arguments. This
             // lets us avoid spurious indentation in cases like:
@@ -535,7 +535,7 @@ class ArgumentSublist
             rule.enableSplitOnInnerRules();
         }
         else if (_allArguments.length > 1 || _allArguments.first is RecordLiteral)
-            //! TODO (tekert): also change here to > 0
+        //! TODO (tekert): also change here to > 0
         {
             visitor.builder.endBlockArgumentNesting();
         }
