@@ -120,8 +120,8 @@ extension ExpressionExtensions on Expression
     bool get isCollectionLike
     {
         var expression = this;
-        if (expression is ListLiteral) return false;
-        if (expression is SetOrMapLiteral) return false;
+        if (expression is ListLiteral) return true;
+        if (expression is SetOrMapLiteral) return true;
 
         // If the target is a call with a trailing comma in the argument list,
         // treat it like a collection literal.
@@ -142,7 +142,7 @@ extension ExpressionExtensions on Expression
         //       element
         //     ])..cascade();
 
-        return arguments == null || !arguments.arguments.hasCommaAfter;
+        return arguments != null && arguments.arguments.hasCommaAfter;
     }
 
     /// Whether this is an argument in an argument list with a trailing comma.

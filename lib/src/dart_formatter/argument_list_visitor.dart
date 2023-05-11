@@ -496,8 +496,8 @@ class ArgumentSublist
             // Tell it to use the rule we've already created.
             visitor.beforeBlock(argumentBlock, blockRule, previousSplit);
         }
-        else if (_allArguments.length >
-            1) //! TODO (tekert): change this to > 0, is an agument, causes confusion if is not indented.
+        else if (_allArguments.length > 1 || _allArguments.first is RecordLiteral)
+            //! TODO (tekert): change this to > 0, is an agument, causes confusion if is not indented.
         {
             // Edge case: Only bump the nesting if there are multiple arguments. This
             // lets us avoid spurious indentation in cases like:
@@ -505,6 +505,10 @@ class ArgumentSublist
             //     function(function(() {
             //       body;
             //     }));
+            //
+            // Do bump the nesting if the single argument is a record because records
+            // are formatted like regular values when they appear in argument lists
+            // even though they internally get block-like formatting.
             visitor.builder.startBlockArgumentNesting();
         }
         else if (argument is! NamedExpression)
@@ -530,7 +534,8 @@ class ArgumentSublist
         {
             rule.enableSplitOnInnerRules();
         }
-        else if (_allArguments.length > 1) //! TODO (tekert): also change here to > 0
+        else if (_allArguments.length > 1 || _allArguments.first is RecordLiteral)
+            //! TODO (tekert): also change here to > 0
         {
             visitor.builder.endBlockArgumentNesting();
         }

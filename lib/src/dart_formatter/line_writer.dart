@@ -217,10 +217,11 @@ class LineWriter
         for (var chunk in block.children)
         {
             if (chunk.spaceWhenUnsplit) _buffer.write(' ');
-            _writeChunk(chunk);
 
             // Recurse into the block.
             if (chunk is BlockChunk) _writeChunksUnsplit(chunk);
+
+            _writeChunk(chunk);
         }
     }
 
