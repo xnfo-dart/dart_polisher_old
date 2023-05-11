@@ -523,7 +523,8 @@ class ArgumentSublist
 
         if (argument is NamedExpression)
         {
-            visitor.visitNamedArgument(argument, rule as NamedRule);
+            visitor.visitNamedNode(argument.name.label.token, argument.name.colon,
+                argument.expression, rule as NamedRule);
         }
         else
         {
