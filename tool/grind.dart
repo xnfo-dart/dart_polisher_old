@@ -133,7 +133,7 @@ Future<void> node() async
             "Transpiled to node.js from dart_polisher (forked from dart_style)",
         "main": fileName,
         "typings": "dart-polisher.d.ts",
-        "files": ["index.js", "*.d.ts"],
+        "files" : ["index.js", "*.d.ts"],
         "scripts": {"test": "echo 'Error: no test specified' && exit 1"},
         "repository": {"type": "git", "url": "$repository.git"},
         "author": "xnfo",
@@ -169,8 +169,8 @@ Future<void> nodePublish() async
     // user intended the "+*" to be published or not.
     if (version.build.isNotEmpty && !force)
         throw "Warning publishing build version $version with"
-            " ${version.build.reduce((v, e) => "$v $e")}."
-            " Are you sure? use --force flag to confirm";
+       " ${version.build.reduce((v, e) => "$v $e")}."
+       " Are you sure? use --force flag to confirm";
 
     var out = FilePath("dist").join("node");
     run("npm", arguments: ["publish", out.path, dryrun ? "--dry-run" : ""]);
@@ -191,7 +191,8 @@ Future<void> nodeBench() async
     Dart2js.compile(File("benchmark/js/benchmark_js.dart"), outFile: tempFile);
 
     var dart2jsBenOutput = tempFile.readAsStringSync();
-    File("$out/bench.js").writeAsStringSync("${preamble.getPreamble()}$dart2jsBenOutput");
+    File("$out/bench.js")
+        .writeAsStringSync("${preamble.getPreamble()}$dart2jsBenOutput");
 
     log("Benchmark for node had been created in: ${out.asDirectory.absolute}");
 }
