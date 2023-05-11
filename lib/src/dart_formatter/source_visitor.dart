@@ -3169,27 +3169,43 @@ class SourceVisitor extends ThrowingAstVisitor
         //! CHANGED(tekert): add new argument node type
         _beginBody(node.leftBracket, nodeType: node);
 
+        // If all of the case bodies are small, it looks nice if they go on the same
+        // line as `case`, like:
+        //
+        //   switch (obj) {
+        //     case 1: print('one');
+        //     case 2:
+        //     case 3: print('two or three');
+        //   }
+        //
+        // But it looks bad if some cases are inline and others split:
+        //
+        //   switch (obj) {
+        //     case 1: print('one');
+        //     case 2:
+        //       print('two');
+        //       print('two again');
+        //     case 3: print('two or three');
+        //   }
+        //
+        // So we use a single rule for all cases. If any case splits, because it has
+        // multiple statements, or there is a split in the pattern or body, then
+        // they all split.
+        var caseRule = SplitContainingRule();
+        caseRule.disableSplitOnInnerRules();
+        //! CHANGED(tekert): a little better, but this guy doesn't understand style.. dynamic changes on styles is not ok.
+        if (_formatter.options.style == CodeStyle.ExpandedStyle)
+            builder.startRule(); // <- for the emperor
+        else
+            builder.startLazyRule(caseRule); // <- horus followers,
+
         for (var member in node.members)
         {
-            // If the case pattern and body don't contain any splits, then we allow
-            // the entire case on one line:
-            //
-            //     switch (obj) {
-            //       case 1:
-            //       case 2: print('one or two');
-            //       default: print('other');
-            //     }
-            //
-            // We wrap the rule for this around the entire case so that a split in
-            // the pattern or the case statement forces splitting after the ":" too.
-            //! CHANGED(tekert): jesus this is heresy
-            if (_formatter.options.style == CodeStyle.ExpandedStyle)
-                builder.startRule(); // <- for the emperor
-            else
-                builder.startLazyRule(); // <- horus followers,
-
             _visitLabels(member.labels);
             token(member.keyword);
+
+            // We want a split in the pattern or bodies to force the cases to split.
+            caseRule.enableSplitOnInnerRules();
 
             if (member is SwitchCase)
             {
@@ -3199,7 +3215,6 @@ class SourceVisitor extends ThrowingAstVisitor
             else if (member is SwitchPatternCase)
             {
                 space();
-
                 var whenClause = member.guardedPattern.whenClause;
                 if (whenClause == null)
                 {
@@ -3222,6 +3237,11 @@ class SourceVisitor extends ThrowingAstVisitor
                     builder.endRule();
                 }
             }
+            else
+            {
+                assert(member is SwitchDefault);
+                // Nothing to do.
+            }
 
             token(member.colon);
 
@@ -3231,16 +3251,22 @@ class SourceVisitor extends ThrowingAstVisitor
                 split();
                 visitNodes(member.statements, between: oneOrTwoNewlines);
                 builder.unindent();
+
+                // We don't want the split between cases to force them to split.
+                caseRule.disableSplitOnInnerRules();
                 oneOrTwoNewlines();
             }
             else
             {
+                // We don't want the split between cases to force them to split.
+                caseRule.disableSplitOnInnerRules();
+
                 // Don't preserve blank lines between empty cases.
                 newline();
             }
-
-            builder.endRule();
         }
+
+        builder.endRule();
 
         newline();
         _endBody(node.rightBracket, forceSplit: true);
