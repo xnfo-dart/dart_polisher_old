@@ -2,6 +2,7 @@
 >A less opitionated Dart formatter based on the oficial `dart_style` formatter.
 
 ## [Unreleased]
+- Sync updates from upstream.
 
 ### New
 - Ability to export library to Node.js `dart-polisher` npm package.  

@@ -6,10 +6,10 @@ version: 0.9.4-dev
 issue_tracker: https://github.com/xnfo-dart/dart_polisher/issues
 repository: https://github.com/xnfo-dart/dart_polisher
 environment:
-  sdk: '>=2.17.0 <3.0.0'
+  sdk: '>=2.18.0 <3.0.0'
 
 dependencies:
-  analyzer: '^5.1.0'
+  analyzer: '^5.2.0'
   args: ^2.3.1
   dart_style: ^2.2.4
   path: ^1.8.2
