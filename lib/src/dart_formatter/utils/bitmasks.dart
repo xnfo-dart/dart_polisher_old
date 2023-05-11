@@ -52,9 +52,8 @@ class CompatibleBits
     static const int bit31 = MAXJSUINT & 1 << 30;
     static const int bit32 = MAXJSUINT & 1 << 31;
 
-    // We can use exended bits until 53 bits are used.
-    // shift is not working past 32 bits in javascript but
-    // we can still use the precision bits.
+    // We can use aditional precision bits until 53 bits are used.
+    // shift is not working on bits over 32 bits in javascript
     static const int bit33 = 0x100000000;
     static const int bit34 = 0x200000000;
     static const int bit35 = 0x400000000;

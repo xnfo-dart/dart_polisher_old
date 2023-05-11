@@ -328,6 +328,12 @@ class SourceVisitor extends ThrowingAstVisitor
     }
 
     @override
+    void visitAssignedVariablePattern(AssignedVariablePattern node)
+    {
+        token(node.name);
+    }
+
+    @override
     void visitAssertStatement(AssertStatement node)
     {
         _simpleStatement(node, ()
@@ -1743,6 +1749,17 @@ class SourceVisitor extends ThrowingAstVisitor
     }
 
     @override
+    void visitForEachPartsWithPattern(ForEachPartsWithPattern node)
+    {
+        builder.startBlockArgumentNesting();
+        token(node.keyword);
+        space();
+        visit(node.pattern);
+        builder.endBlockArgumentNesting();
+        _visitForEachPartsFromIn(node);
+    }
+
+    @override
     void visitForPartsWithDeclarations(ForPartsWithDeclarations node)
     {
         // Nest split variables more so they aren't at the same level
@@ -1772,6 +1789,15 @@ class SourceVisitor extends ThrowingAstVisitor
     void visitForPartsWithExpression(ForPartsWithExpression node)
     {
         visit(node.initialization);
+        _visitForPartsFromLeftSeparator(node);
+    }
+
+    @override
+    void visitForPartsWithPattern(ForPartsWithPattern node)
+    {
+        builder.startBlockArgumentNesting();
+        visit(node.variables);
+        builder.endBlockArgumentNesting();
         _visitForPartsFromLeftSeparator(node);
     }
 
@@ -2652,6 +2678,33 @@ class SourceVisitor extends ThrowingAstVisitor
             visit(node.libraryName);
             visit(node.uri);
         });
+    }
+
+    @override
+    void visitPatternAssignment(PatternAssignment node)
+    {
+        visit(node.pattern);
+        _visitAssignment(node.equals, node.expression);
+    }
+
+    @override
+    void visitPatternVariableDeclaration(PatternVariableDeclaration node)
+    {
+        visitMetadata(node.metadata);
+        builder.nestExpression();
+        token(node.keyword);
+        space();
+        visit(node.pattern);
+        _visitAssignment(node.equals, node.expression);
+        builder.unnest();
+    }
+
+    @override
+    void visitPatternVariableDeclarationStatement(
+        PatternVariableDeclarationStatement node)
+    {
+        visit(node.declaration);
+        token(node.semicolon);
     }
 
     @override
@@ -4256,7 +4309,8 @@ class SourceVisitor extends ThrowingAstVisitor
     /// `true`).
     void _beginBody(Token leftBracket, {bool space = false, AstNode? nodeType})
     {
-        //! CHANGED(tekert) add new line on everything exept some collection literals (Assertion, ArgumentList).
+        //! CHANGED(tekert) add new line on everything except some collection literals
+        //! (Assertion In contructors and statements, ArgumentList with trailing comma).
         if ((leftBracket.type == TokenType.OPEN_CURLY_BRACKET) &&
             (_formatter.options.style.mask & BodyOpt.outerBracesOnBlockLike > 0) &&
             (nodeType is! TypedLiteral) &&

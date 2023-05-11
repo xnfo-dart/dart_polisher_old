@@ -19,8 +19,8 @@ class DPConst
     // Note: Change this manually only when merging all changes from upstream up to *this version
     static const String FORKED_FROM_DART_STYLE_VERSION = "2.2.5-dev";
     static const String FORKED_FROM_DART_STYLE_COMMIT =
-        "https://github.com/dart-lang/dart_style/commit/56df84744abcb4bd733e4c5de310347949a44c82";
-    static const String FORKED_FROM_DART_STYLE_COMMIT_DATE = "Tue Oct 11 2022";
+        "https://github.com/dart-lang/dart_style/commit/480b449509b7232575c51a77fc62fa3d9e14e670";
+    static const String FORKED_FROM_DART_STYLE_COMMIT_DATE = "Mon Feb 13 2023";
 }
 
 class DefaultValue
