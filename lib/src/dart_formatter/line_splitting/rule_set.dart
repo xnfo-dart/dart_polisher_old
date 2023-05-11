@@ -186,7 +186,7 @@ class SplitSet
     {
         return [
             for (var i = 0; i < _columns.length; i++)
-              if (_columns[i] != -1) '$i:${_columns[i]}'
+                if (_columns[i] != -1) '$i:${_columns[i]}'
         ].join(' ');
     }
 }

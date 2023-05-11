@@ -1647,7 +1647,8 @@ class SourceVisitor extends ThrowingAstVisitor
         builder.endRule();
         builder.unnest();
 
-        builder.nestExpression(indent: 2, now: true);
+        //! CHANGED(tekert): use user options for block indent
+        builder.nestExpression(indent: _formatter.options.tabSizes.block, now: true);
 
         if (isSpreadBody)
         {
@@ -1981,10 +1982,8 @@ class SourceVisitor extends ThrowingAstVisitor
         // Treat a chain of if-else elements as a single unit so that we don't
         // unnecessarily indent each subsequent section of the chain.
         var ifElements = [
-            for (CollectionElement? thisNode = node;
-                thisNode is IfElement;
-                thisNode = thisNode.elseElement)
-              thisNode
+            for (CollectionElement? thisNode = node; thisNode is IfElement; thisNode = thisNode.elseElement)
+                thisNode
         ];
 
         // If the body of the then or else branch is a spread of a collection
@@ -3097,78 +3096,169 @@ class SourceVisitor extends ThrowingAstVisitor
     }
 
     @override
-    void visitSwitchCase(SwitchCase node)
+    void visitSwitchExpression(SwitchExpression node)
     {
-        _visitLabels(node.labels);
-        token(node.keyword);
+        // Start the rule for splitting between the cases before the value. That
+        // way, if the value expression splits, the cases do too. Avoids:
+        //
+        //     switch ([
+        //        element,
+        //     ]) { inline => caseBody };
+        builder.startRule();
+
+        _visitSwitchValue(node.switchKeyword, node.leftParenthesis, node.expression,
+            node.rightParenthesis);
+
+        token(node.leftBracket);
+        builder = builder.startBlock(space: true);
+
+        visitCommaSeparatedNodes(node.cases, between: split);
+
+        var hasTrailingComma = node.cases.last.commaAfter != null;
+        _endBody(node.rightBracket, forceSplit: hasTrailingComma);
+    }
+
+    @override
+    void visitSwitchExpressionCase(SwitchExpressionCase node)
+    {
+        // Wrap the rule for splitting after "=>" around the pattern so that a
+        // split in the pattern forces the expression to move to the next line too.
+        builder.startLazyRule();
+
+        // Wrap the expression's nesting around the pattern too so that a split in
+        // the pattern is indented farther then the body expression. Used +2 indent
+        // because switch expressions are block-like, similar to how we split the
+        // bodies of if and for elements in collections.
+        builder.nestExpression(indent: Indent.block);
+
+        var whenClause = node.guardedPattern.whenClause;
+        if (whenClause == null)
+        {
+            visit(node.guardedPattern.pattern);
+        }
+        else
+        {
+            // Wrap the when clause rule around the pattern so that if the pattern
+            // splits then we split before "when" too.
+            builder.startRule();
+            builder.nestExpression(indent: Indent.block);
+            visit(node.guardedPattern.pattern);
+            split();
+            builder.startBlockArgumentNesting();
+            _visitWhenClause(whenClause);
+            builder.endBlockArgumentNesting();
+            builder.unnest();
+            builder.endRule();
+        }
+
         space();
+        token(node.arrow);
+        split();
+
+        builder.endRule();
+
         visit(node.expression);
-        token(node.colon);
-
-        builder.indent();
-        newline();
-
-        visitNodes(node.statements, between: oneOrTwoNewlines);
-        builder.unindent();
-    }
-
-    @override
-    void visitSwitchDefault(SwitchDefault node)
-    {
-        _visitLabels(node.labels);
-        token(node.keyword);
-        token(node.colon);
-
-        builder.indent();
-        newline();
-
-        visitNodes(node.statements, between: oneOrTwoNewlines);
-        builder.unindent();
-    }
-
-    @override
-    void visitSwitchPatternCase(SwitchPatternCase node)
-    {
-        _visitLabels(node.labels);
-
-        token(node.keyword);
-        space();
-
-        builder.indent();
-        builder.startBlockArgumentNesting();
-        builder.nestExpression();
-        visit(node.guardedPattern.pattern);
         builder.unnest();
-        builder.endBlockArgumentNesting();
-        builder.unindent();
-
-        visit(node.guardedPattern.whenClause);
-        token(node.colon);
-
-        builder.indent();
-        newline();
-
-        visitNodes(node.statements, between: oneOrTwoNewlines);
-        builder.unindent();
     }
 
     @override
     void visitSwitchStatement(SwitchStatement node)
     {
+        _visitSwitchValue(node.switchKeyword, node.leftParenthesis, node.expression,
+            node.rightParenthesis);
+        //! CHANGED(tekert): add new argument node type
+        _beginBody(node.leftBracket, nodeType: node);
+
+        for (var member in node.members)
+        {
+            // If the case pattern and body don't contain any splits, then we allow
+            // the entire case on one line:
+            //
+            //     switch (obj) {
+            //       case 1:
+            //       case 2: print('one or two');
+            //       default: print('other');
+            //     }
+            //
+            // We wrap the rule for this around the entire case so that a split in
+            // the pattern or the case statement forces splitting after the ":" too.
+            //! CHANGED(tekert): jesus this is heresy
+            if (_formatter.options.style == CodeStyle.ExpandedStyle)
+                builder.startRule(); // <- for the emperor
+            else
+                builder.startLazyRule(); // <- horus followers,
+
+            _visitLabels(member.labels);
+            token(member.keyword);
+
+            if (member is SwitchCase)
+            {
+                space();
+                visit(member.expression);
+            }
+            else if (member is SwitchPatternCase)
+            {
+                space();
+
+                var whenClause = member.guardedPattern.whenClause;
+                if (whenClause == null)
+                {
+                    builder.indent();
+                    visit(member.guardedPattern.pattern);
+                    builder.unindent();
+                }
+                else
+                {
+                    // Wrap the when clause rule around the pattern so that if the pattern
+                    // splits then we split before "when" too.
+                    builder.startRule();
+                    builder.nestExpression();
+                    builder.startBlockArgumentNesting();
+                    visit(member.guardedPattern.pattern);
+                    split();
+                    _visitWhenClause(whenClause);
+                    builder.endBlockArgumentNesting();
+                    builder.unnest();
+                    builder.endRule();
+                }
+            }
+
+            token(member.colon);
+
+            if (member.statements.isNotEmpty)
+            {
+                builder.indent();
+                split();
+                visitNodes(member.statements, between: oneOrTwoNewlines);
+                builder.unindent();
+                oneOrTwoNewlines();
+            }
+            else
+            {
+                // Don't preserve blank lines between empty cases.
+                newline();
+            }
+
+            builder.endRule();
+        }
+
+        newline();
+        _endBody(node.rightBracket, forceSplit: true);
+    }
+
+    /// Visits the `switch (expr)` part of a switch statement or expression.
+    void _visitSwitchValue(Token switchKeyword, Token leftParenthesis, Expression value,
+        Token rightParenthesis)
+    {
         builder.nestExpression();
-        token(node.switchKeyword);
+        token(switchKeyword);
         space();
-        token(node.leftParenthesis);
+        token(leftParenthesis);
         soloZeroSplit();
-        visit(node.expression);
-        token(node.rightParenthesis);
+        visit(value);
+        token(rightParenthesis);
         space();
         builder.unnest();
-
-        //! CHANGED(tekert): added new parameter node
-        _beginBody(node.leftBracket, nodeType: node);
-        visitNodes(node.members, between: oneOrTwoNewlines, after: newline);
-        _endBody(node.rightBracket, forceSplit: true);
     }
 
     @override
@@ -3330,21 +3420,6 @@ class SourceVisitor extends ThrowingAstVisitor
         {
             visit(node.variables);
         });
-    }
-
-    @override
-    void visitWhenClause(WhenClause node)
-    {
-        builder.startRule();
-        split();
-        token(node.whenKeyword);
-        space();
-        builder.startBlockArgumentNesting();
-        builder.nestExpression();
-        visit(node.expression);
-        builder.unnest();
-        builder.endBlockArgumentNesting();
-        builder.endRule();
     }
 
     @override
@@ -4120,36 +4195,59 @@ class SourceVisitor extends ThrowingAstVisitor
         space();
         token(leftParenthesis);
 
-        if (caseClause != null)
+        if (caseClause == null)
         {
+            // Simple if with no "case".
+            visit(condition);
+        }
+        else
+        {
+            // If-case.
+
             // Wrap the rule for splitting before "case" around the value expression
             // so that if the value splits, we split before "case" too.
-            builder.startRule();
+            var caseRule = Rule();
+            builder.startRule(caseRule);
 
-            // Nest the condition so that it indents deeper than the case clause.
-            builder.nestExpression();
-        }
+            visit(condition);
 
-        visit(condition);
-
-        // If-case clause.
-        if (caseClause != null)
-        {
+            // "case" and pattern.
             split();
             token(caseClause.caseKeyword);
             space();
             builder.startBlockArgumentNesting();
-            builder.nestExpression();
+            builder.nestExpression(now: true);
             visit(caseClause.guardedPattern.pattern);
             builder.unnest();
             builder.endBlockArgumentNesting();
-            builder.endRule();
-            visit(caseClause.guardedPattern.whenClause);
+
+            builder.endRule(); // Case rule.
+
+            var whenClause = caseClause.guardedPattern.whenClause;
+            if (whenClause != null)
+            {
+                // Wrap the rule for "when" around the guard so that a split in the
+                // guard splits at "when" too.
+                builder.startRule();
+                split();
+                builder.startBlockArgumentNesting();
+                builder.nestExpression();
+                _visitWhenClause(whenClause);
+                builder.unnest();
+                builder.endBlockArgumentNesting();
+                builder.endRule(); // Guard rule.
+            }
         }
 
         token(rightParenthesis);
-        if (caseClause != null) builder.unnest();
         builder.unnest();
+    }
+
+    void _visitWhenClause(WhenClause whenClause)
+    {
+        token(whenClause.whenKeyword);
+        space();
+        visit(whenClause.expression);
     }
 
     /// Writes the separator between a type annotation and a variable or
@@ -4311,12 +4409,14 @@ class SourceVisitor extends ThrowingAstVisitor
     {
         //! CHANGED(tekert) add new line on everything except some collection literals
         //! (Assertion In contructors and statements, ArgumentList with trailing comma).
+        //! SwitchPatternCase Blocks by default uses a new line.
         if ((leftBracket.type == TokenType.OPEN_CURLY_BRACKET) &&
             (_formatter.options.style.mask & BodyOpt.outerBracesOnBlockLike > 0) &&
             (nodeType is! TypedLiteral) &&
             (nodeType is! Literal) &&
             (nodeType is! DartPattern) &&
-            (nodeType is! EnumDeclaration))
+            (nodeType is! EnumDeclaration) &&
+            (nodeType?.parent is! SwitchPatternCase))
         // EnumDeclaration is handled in [visitEnumDeclaration]
         // TypedLiteral, Literal, DartPattern, Assertion, ArgumentList are handled in [_visitCollectionLiteral]
         //TODO (tekert): make enums with outer bracket if we expand elements.
