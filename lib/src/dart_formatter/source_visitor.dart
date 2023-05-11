@@ -3198,7 +3198,7 @@ class SourceVisitor extends ThrowingAstVisitor
 
                 // We don't want the split between cases to force them to split.
                 caseRule.disableSplitOnInnerRules();
-                oneOrTwoNewlines();
+                oneOrTwoNewlines(preventDivide: true);
             }
             else
             {
@@ -3206,7 +3206,7 @@ class SourceVisitor extends ThrowingAstVisitor
                 caseRule.disableSplitOnInnerRules();
 
                 // Don't preserve blank lines between empty cases.
-                newline();
+                builder.writeNewline(preventDivide: true);
             }
         }
 
@@ -4123,7 +4123,7 @@ class SourceVisitor extends ThrowingAstVisitor
 
         for (var parameter in parameters.parameters)
         {
-            newline();
+            builder.writeNewline(preventDivide: true);
             visit(parameter);
             _writeCommaAfter(parameter);
 
@@ -4141,7 +4141,7 @@ class SourceVisitor extends ThrowingAstVisitor
         var firstDelimiter = parameters.rightDelimiter ?? parameters.rightParenthesis;
         if (firstDelimiter.precedingComments != null)
         {
-            newline();
+            builder.writeNewline(preventDivide: true);
             writePrecedingCommentsAndNewlines(firstDelimiter);
         }
 
@@ -4708,16 +4708,10 @@ class SourceVisitor extends ThrowingAstVisitor
     /// Allow either one or two newlines to be emitted before the next
     /// non-whitespace token based on whether any blank lines exist in the source
     /// between the last token and the next one.
-    void oneOrTwoNewlines()
+    void oneOrTwoNewlines({bool preventDivide = false})
     {
-        if (_linesBeforeNextToken > 1)
-        {
-            twoNewlines();
-        }
-        else
-        {
-            newline();
-        }
+        builder.writeNewline(
+            isDouble: _linesBeforeNextToken > 1, preventDivide: preventDivide);
     }
 
     /// The number of newlines between the last written token and the next one to

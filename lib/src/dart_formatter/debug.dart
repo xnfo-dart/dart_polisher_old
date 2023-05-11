@@ -83,9 +83,6 @@ void dumpChunks(int start, List<Chunk> chunks)
 
     addSpans(chunks);
 
-    var spans = spanSet.toList();
-    var rules = chunks.map((chunk) => chunk.rule).toSet();
-
     var rows = <List<String>>[];
 
     void addChunk(List<Chunk> chunks, String prefix, int index)
@@ -122,6 +119,7 @@ void dumpChunks(int start, List<Chunk> chunks)
         if (rule.isHardened) ruleString += '!';
         row.add(ruleString);
 
+        var rules = chunks.map((chunk) => chunk.rule).toSet();
         var constrainedRules = rule.constrainedRules.toSet().intersection(rules);
         writeIf(constrainedRules.isNotEmpty, () => "-> ${constrainedRules.join(" ")}");
 
@@ -136,6 +134,7 @@ void dumpChunks(int start, List<Chunk> chunks)
         writeIf(chunk.indent != 0, () => 'indent ${chunk.indent}');
         writeIf(chunk.nesting.indent != 0, () => 'nest ${chunk.nesting}');
 
+        var spans = spanSet.toList();
         if (spans.length <= 20)
         {
             var spanBars = '';
