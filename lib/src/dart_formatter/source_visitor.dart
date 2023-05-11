@@ -1471,7 +1471,6 @@ class SourceVisitor extends ThrowingAstVisitor
         if (requiredParams.isNotEmpty)
         {
             rule = PositionalRule(null, argumentCount: requiredParams.length);
-            _metadataRules.last.constrainWhenFullySplit(rule);
 
             builder.startRule(rule);
             if (node.isFunctionExpressionBody)
