@@ -1,7 +1,10 @@
 # Changelog
->A less opitionated Dart formatter based on the oficial `dart_style` formatter.
+>A less opitionated Dart formatter based on the official Dart `dart_style` formatter.
 
 ## [Unreleased]
+
+
+## [0.9.4] - 12/5/2023
 
 ### New
 - Ability to export library to Node.js `dart-polisher` npm package.  
@@ -12,7 +15,7 @@ Additional grinder node tools: `grinder benchmark` (10x times slower on avg usin
 Import it using npm: [dart-polisher](https://www.npmjs.com/package/dart-polisher), or file: `dist/node/dart-polisher-*.tgz`.
 
 ### Upstream fixes
-* Format unnamed libraries.
+- Format unnamed libraries.
 - Sync updates from upstream (records, patterns, class modifiers, switch cases)
 - Keep using the old switch case style in Expanded Style.
 
@@ -76,7 +79,8 @@ Import it using npm: [dart-polisher](https://www.npmjs.com/package/dart-polisher
 - Initial version.
 
 
-[Unreleased]: https://github.com/xnfo-dart/dart-polisher/compare/v0.9.2...HEAD
+[Unreleased]: https://github.com/xnfo-dart/dart-polisher/compare/v0.9.4...HEAD
+[0.9.4]: https://github.com/xnfo-dart/dart-polisher/releases/tag/v0.9.4
 [0.9.2]: https://github.com/xnfo-dart/dart-polisher/releases/tag/v0.9.2
 [0.9.1]: https://github.com/xnfo-dart/dart-polisher/releases/tag/v0.9.1
 [0.9.0]: https://github.com/xnfo-dart/dart-polisher/releases/tag/v0.9.0
