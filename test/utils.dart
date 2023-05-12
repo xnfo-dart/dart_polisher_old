@@ -7,7 +7,7 @@ library dart_style.test.utils;
 import 'dart:io';
 import 'dart:mirrors';
 
-import 'package:dart_style/dart_style.dart';
+import 'package:dart_polisher/dart_polisher.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 import 'package:test_descriptor/test_descriptor.dart' as d;
@@ -114,13 +114,32 @@ Future<void> _deleteSnapshot(String snapshot) async
 /// Runs the command line formatter, passing it [args].
 Future<TestProcess> runFormatter([List<String>? args])
 {
+    //! CHANGED(tekert): use dart_style like options for formatting
+    var fargs = ["format"];
+    if (args != null)
+        fargs += [
+            ...args,
+            '-s',
+            '0',
+            '-l',
+            '80',
+            '--tab-size-initializer',
+            '4',
+            '--tab-size-cascade',
+            '2',
+            '--tab-size-block',
+            '2',
+            '--tab-size-expression',
+            '4'
+        ];
+
     if (_formatterExecutablePath == null)
     {
         fail('Must call createFormatterExecutable() before running commands.');
     }
 
     return TestProcess.start(
-        Platform.resolvedExecutable, [_formatterExecutablePath!, ...?args],
+        Platform.resolvedExecutable, [_formatterExecutablePath!, ...fargs],
         workingDirectory: d.sandbox);
 }
 
@@ -268,8 +287,14 @@ void _testFile(String name, String path, Iterable<StyleFix>? baseFixes)
                     isCompilationUnit: isCompilationUnit);
                 var expectedText = expected.text;
 
-                var formatter = DartFormatter(
-                    pageWidth: pageWidth, indent: leadingIndent, fixes: fixes);
+                //! CHANGED(tekert): Use dart_style default indentation for unit files testing.
+                var o = FormatterOptions.opt(
+                    tabSizes: CodeIndent(
+                        block: 2, cascade: 2, expression: 4, constructorInitializer: 4),
+                    pageWidth: pageWidth ?? 80,
+                    indent: leadingIndent,
+                    fixes: {...fixes});
+                var formatter = DartFormatter(o);
 
                 var actual = formatter.formatSource(inputCode);
 

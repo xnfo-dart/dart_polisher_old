@@ -5,7 +5,7 @@
 @TestOn('vm')
 library dart_style.test.fix_test;
 
-import 'package:dart_style/dart_style.dart';
+import 'package:dart_polisher/dart_polisher.dart';
 import 'package:test/test.dart';
 
 import 'utils.dart';

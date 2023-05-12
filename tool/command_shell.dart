@@ -7,14 +7,13 @@ import 'package:args/command_runner.dart';
 
 import 'package:dart_polisher/src/cli/commands/format_command.dart';
 
-/// A simple executable wrapper around the [Command] API defined by dart_style.
+/// A simple executable wrapper around the [Command] API defined by dart_polisher.
 ///
 /// This enables tests to spawn this executable in order to verify the output
 /// it prints.
 void main(List<String> arguments) async
 {
-    var runner =
-        CommandRunner<int>('command_shell', 'Idiomatically format Dart source code.');
+    var runner = CommandRunner<int>('command_shell', 'Format Dart source code.');
     runner.argParser
         .addFlag('verbose', abbr: 'v', negatable: false, help: 'Show verbose help.');
     runner.addCommand(FormatCommand(

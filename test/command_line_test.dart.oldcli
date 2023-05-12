@@ -123,7 +123,7 @@ void main()
         {
             var process = await runFormatter(['--help']);
             await expectLater(
-                process.stdout, emits('Idiomatically format Dart source code.'));
+                process.stdout, emits('Format Dart source code'));
             await expectLater(process.stdout, emits(''));
             await expectLater(process.stdout,
                 emits('Usage:   dartfmt [options...] [files or directories...]'));
@@ -138,7 +138,7 @@ void main()
         {
             var process = await runFormatter(['--help', '--verbose']);
             await expectLater(
-                process.stdout, emits('Idiomatically format Dart source code.'));
+                process.stdout, emits('Format Dart source code'));
             await expectLater(process.stdout, emits(''));
             await expectLater(process.stdout,
                 emits('Usage:   dartfmt [options...] [files or directories...]'));

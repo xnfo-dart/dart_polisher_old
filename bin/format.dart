@@ -28,7 +28,7 @@ class CLIRunner<T> extends CommandRunner<T>
 void main(List<String> args) async
 {
     bool verbose = args.contains("--verbose") || args.contains("-v");
-    var runner = CLIRunner<int>("dartpolish", "A dart customization of dart_style formatter.")
+    var runner = CLIRunner<int>("dartpolish", "A custom dart formatter based on dart_style.")
         /*..argParser.addFlag('verbose',
                 abbr: 'v',
                 help: 'Show additional options..',
