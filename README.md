@@ -15,7 +15,7 @@
 TODO doc.
 
 ## Build
-> Until i finish the v1.0.0 release and update the grinder for better queality of life when building, i build every step separately fow now.
+> Until I finish the v1.0.0 release and update the grinder for better quality of life when building, build every step separately fow now.
 
 1. (when releasing tag) Bump version (protocol, app, and dependencies)<br>
 ```dart run grinder bump```

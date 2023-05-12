@@ -6,9 +6,9 @@ import 'package:dart_polisher/src/dart_formatter/utils/bitmasks.dart';
 
 /// Styles can have each different tab modes and indents.
 enum CodeStyle {
-    DartStyle("Dart  Style", "Google 'dart' style [custom tab indents & tab mode]", 0, 0),
+    DartStyle("Dart Style", "Google 'dart' style [custom tab indents & tab mode]", 0, 0),
     ExpandedStyle(
-        "ExpandedSetyle",
+        "Expanded",
         "dart_style with outer braces on block-like nodes",
         1,
         BodyOpt.outerBracesOnBlockLike |
@@ -19,23 +19,42 @@ enum CodeStyle {
     style3(".", "...", 3, 0),
     ;
 
-    /// Get the enum corresponding to [styleCode],
-    /// returns the default enum if there is no match or if [styleCode] is null.
-    static CodeStyle getEnum(int? styleCode)
+    /// Get the enum matching the style [code],
+    /// returns the default enum if there is no match or if [code] is null.
+    static CodeStyle getStyleFromCode(int? code)
     {
-        return CodeStyle.values.firstWhere((element) => element.styleCode == styleCode,
+        return CodeStyle.values.firstWhere((element) => element.code == code,
             orElse: () => CodeStyle.DartStyle);
     }
 
-    const CodeStyle(this.styleName, this.styleDescription, this.styleCode, this.mask);
+    /// Get the enum matching the style [code],
+    /// returns the default enum if there is no match or if [code] is null.
+    // TODO(tekert): Remove in version 1.0.0
+    @Deprecated("Use getStyleFromCode instead, "
+        "'getEnum' will be removed in the next mayor version")
+    static CodeStyle getEnum(int? code)
+    {
+        return CodeStyle.values.firstWhere((element) => element.code == code,
+            orElse: () => CodeStyle.DartStyle);
+    }
 
-    final String styleName;
-    final String styleDescription;
-    final int styleCode;
+    /// Get the first enum matching the style [name],
+    /// returns the default enum if there is no match or if [name] is null.
+    static CodeStyle getStyleFromName(String? name)
+    {
+        return CodeStyle.values.firstWhere((element) => element.name == name,
+            orElse: () => CodeStyle.DartStyle);
+    }
+
+    const CodeStyle(this.name, this.description, this.code, this.mask);
+
+    final String name;
+    final String description;
+    final int code;
     final int mask;
 }
 
-/// Class with bit values representing Formatting options for Body-like sintaxes
+/// Class with bit values representing Formatting options for Body-like sintaxis
 ///
 /// Its used to build bitmasks: bitmask = option1 | option2;
 ///
@@ -70,35 +89,27 @@ class BodyOpt
 
     /// Outer braces on collection literals
     /// If they split, they become difficult to distinguish between blocks and collections.
-    /// It's folded if it can fit inside linelengt and split if not.
+    /// It's folded if it can fit inside max line lenght and split if not.
     ///
     ///! NOT IMPLEMENTED.
     static const int outerBracesOnCollectionLiteralsSmart = CompatibleBits.bit2;
 
-    /// Enum is a specials case, can look good folded if it fits in lineLenght.
-    /// true means split '{' if contents split, remain folded if not.
-    /// same case with collection literals, looks better if its folded.
-    /// that way it can be better distinguished between block-like nodes.
-    // TODO (tekert): check if it looks good.
+    /// Enum is a special case, can look good folded if it fits in max line lenght.
+    /// True means split '{' if contents split, remain folded if false.
+    /// Same case with collection literals, looks better if its folded.
+    /// That way it can be better distinguished between block-like nodes.
+    // TODO (tekert): not implemented yet, check if it looks good.
     static const int outerBracesOnEnumSmart = CompatibleBits.bit3;
 
     // The stataments that follow a '}' like: else/else if/catch/on/finally
 
-    /// Puts clause within a [TryStatement] clause on newline
+    /// Puts clause within a [TryStatement] clause on newline.
     static const int outerTryStatementClause = CompatibleBits.bit4;
 
     /// Puts else [Statement]s on newline, uses space if not set.
     static const int outerIfStatementElse = CompatibleBits.bit5;
 
     const BodyOpt();
-
-    static int getExpandedBody()
-    {
-        return outerBracesOnBlockLike |
-            outerBracesOnEnumSmart |
-            outerTryStatementClause |
-            outerIfStatementElse;
-    }
 }
 
 /// Constants for the number of spaces in various kinds of indentation.

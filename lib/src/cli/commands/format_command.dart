@@ -23,9 +23,8 @@ class FormatCommand extends Command<int>
     String get name => 'format';
 
     @override
-    String get description =>
-        "[${DPConst.VERSION}] Format Dart source code with custom styles and indents."
-        " (Fork using dart_style ${DPConst.FORKED_FROM_DART_STYLE_VERSION})";
+    String get description => "Format Dart source code with custom styles and indents.\n"
+        "Version: [${DPConst.VERSION}] (Fork using dart_style ${DPConst.FORKED_FROM_DART_STYLE_VERSION})";
 
     @override
     String get invocation =>

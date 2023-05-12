@@ -82,6 +82,7 @@ class LineWriter
         var cached = _blockCache[key];
         if (cached != null) return cached;
 
+        //! CHANGED(tekert): add _formatter argument
         var writer = LineWriter._(
             chunk.children, _lineEnding, pageWidth, column, _blockCache, _formatter);
         return _blockCache[key] = writer.writeLines();
@@ -217,10 +218,11 @@ class LineWriter
         for (var chunk in block.children)
         {
             if (chunk.spaceWhenUnsplit) _buffer.write(' ');
-            _writeChunk(chunk);
 
             // Recurse into the block.
             if (chunk is BlockChunk) _writeChunksUnsplit(chunk);
+
+            _writeChunk(chunk);
         }
     }
 

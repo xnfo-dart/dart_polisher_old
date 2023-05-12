@@ -6,10 +6,10 @@ class DPConst
 {
     // NOTE: The following line of code is modified by tool/grind.dart.
     /// Dart Polisher version number
-    static const String VERSION = "0.9.2";
+    static const String VERSION = "0.9.4";
     // NOTE: The following line of code is modified by tool/grind.dart.
     /// This version is used to embed dart_style as a separate command in cli.
-    static const String DART_STYLE_DEP_VERSION = "2.2.4";
+    static const String DART_STYLE_DEP_VERSION = "2.2.5";
 
     /// Version string
     static const String VERSION_STRING = "Formatter version: $VERSION"
@@ -17,9 +17,10 @@ class DPConst
 
     /// The last merge from dart_style
     // Note: Change this manually only when merging all changes from upstream up to *this version
-    static const String FORKED_FROM_DART_STYLE_VERSION = "2.2.4";
+    static const String FORKED_FROM_DART_STYLE_VERSION = "2.2.5-dev";
     static const String FORKED_FROM_DART_STYLE_COMMIT =
-        "https://github.com/dart-lang/dart_style/commit/dec7e72856a6b693d7f23a6a904bfe23d32b3ad4";
+        "https://github.com/dart-lang/dart_style/commit/6d19435c789e07cf1aaa29da019010b002882d39";
+    static const String FORKED_FROM_DART_STYLE_COMMIT_DATE = "Wed Mar 01 2023";
 }
 
 class DefaultValue

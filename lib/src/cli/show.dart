@@ -83,7 +83,7 @@ enum Show {
     {
         if (this == Show.legacy || this == Show.overwrite)
         {
-            print('Formatting directory $directory:');
+            print('Formatting directory $path:');
         }
     }
 

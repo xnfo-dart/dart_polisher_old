@@ -13,7 +13,7 @@ class DartStyleCommand extends dart_style.FormatCommand
 
     @override
     String get description =>
-        '[${dart_style.dartStyleVersion}] Use the official Dart style formatter library';
+        'Use the official Dart style formatter library. [${dart_style.dartStyleVersion}] ';
 
     DartStyleCommand({bool verbose = true}) : super(verbose: verbose);
 }

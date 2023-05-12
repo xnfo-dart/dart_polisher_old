@@ -4,8 +4,10 @@
 
 import 'dart:io';
 
-import 'package:dart_style/src/cli/formatter_options.dart';
-import 'package:dart_style/src/io.dart';
+//import 'package:dart_style/src/cli/formatter_options.dart';
+import 'package:dart_polisher/src/cli/cli_options.dart';
+//import 'package:dart_style/src/io.dart';
+import 'package:dart_polisher/src/cli/io.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 import 'package:test_descriptor/test_descriptor.dart' as d;
@@ -14,8 +16,8 @@ import 'utils.dart';
 
 void main()
 {
-    var overwriteOptions = FormatterOptions();
-    var followOptions = FormatterOptions(followLinks: true);
+    var overwriteOptions = CliOptions(); // CliOptions
+    var followOptions = CliOptions(followLinks: true);
 
     test('handles directory ending in ".dart"', () async
     {

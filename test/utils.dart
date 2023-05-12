@@ -114,13 +114,32 @@ Future<void> _deleteSnapshot(String snapshot) async
 /// Runs the command line formatter, passing it [args].
 Future<TestProcess> runFormatter([List<String>? args])
 {
+    //! CHANGED(tekert): use dart_style like options for formatting
+    var fargs = ["format"];
+    if (args != null)
+        fargs += [
+            ...args,
+            '-s',
+            '0',
+            '-l',
+            '80',
+            '--tab-size-initializer',
+            '4',
+            '--tab-size-cascade',
+            '2',
+            '--tab-size-block',
+            '2',
+            '--tab-size-expression',
+            '4'
+        ];
+
     if (_formatterExecutablePath == null)
     {
         fail('Must call createFormatterExecutable() before running commands.');
     }
 
     return TestProcess.start(
-        Platform.resolvedExecutable, [_formatterExecutablePath!, ...?args],
+        Platform.resolvedExecutable, [_formatterExecutablePath!, ...fargs],
         workingDirectory: d.sandbox);
 }
 
