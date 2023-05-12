@@ -328,12 +328,6 @@ class SourceVisitor extends ThrowingAstVisitor
     }
 
     @override
-    void visitAssignedVariablePattern(AssignedVariablePattern node)
-    {
-        token(node.name);
-    }
-
-    @override
     void visitAssertStatement(AssertStatement node)
     {
         _simpleStatement(node, ()
@@ -358,6 +352,12 @@ class SourceVisitor extends ThrowingAstVisitor
                 this, node.leftParenthesis, node.rightParenthesis, arguments);
             visitor.visit();
         });
+    }
+
+    @override
+    void visitAssignedVariablePattern(AssignedVariablePattern node)
+    {
+        token(node.name);
     }
 
     @override
@@ -1520,7 +1520,6 @@ class SourceVisitor extends ThrowingAstVisitor
         if (optionalParams.isNotEmpty)
         {
             var namedRule = NamedRule(null, 0, 0);
-            _metadataRules.last.constrainWhenFullySplit(namedRule);
             if (rule != null) rule.addNamedArgsConstraints(namedRule);
 
             builder.startRule(namedRule);
@@ -2475,6 +2474,10 @@ class SourceVisitor extends ThrowingAstVisitor
         visitMetadata(node.metadata);
 
         builder.nestExpression();
+        modifier(node.baseKeyword);
+        modifier(node.interfaceKeyword);
+        modifier(node.finalKeyword);
+        modifier(node.sealedKeyword);
         token(node.mixinKeyword);
         space();
         token(node.name);
@@ -3099,7 +3102,9 @@ class SourceVisitor extends ThrowingAstVisitor
         // the pattern is indented farther then the body expression. Used +2 indent
         // because switch expressions are block-like, similar to how we split the
         // bodies of if and for elements in collections.
-        builder.nestExpression(indent: Indent.block);
+        //! CHANGED(tekert) replace Constant with runtime options
+        //builder.nestExpression(indent: Indent.block);
+        builder.nestExpression(indent: _formatter.options.tabSizes.block);
 
         var whenClause = node.guardedPattern.whenClause;
         if (whenClause == null)
@@ -3111,7 +3116,9 @@ class SourceVisitor extends ThrowingAstVisitor
             // Wrap the when clause rule around the pattern so that if the pattern
             // splits then we split before "when" too.
             builder.startRule();
-            builder.nestExpression(indent: Indent.block);
+            //! CHANGED(tekert) replace Constant with runtime options
+            //builder.nestExpression(indent: Indent.block);
+            builder.nestExpression(indent: _formatter.options.tabSizes.block);
             visit(node.guardedPattern.pattern);
             split();
             builder.startBlockArgumentNesting();
@@ -3947,6 +3954,7 @@ class SourceVisitor extends ThrowingAstVisitor
     /// If [splitOuterCollection] is `true` then this collection forces any
     /// surrounding collections to split even if this one doesn't. We do this for
     /// collection literals, but not other collection-like constructs.
+    /// //! CHANGED(tekert) add parameter nodeType
     void _visitCollectionLiteral(
         Token leftBracket, List<AstNode> elements, Token rightBracket, AstNode? node,
         {Token? constKeyword,
@@ -3954,7 +3962,6 @@ class SourceVisitor extends ThrowingAstVisitor
         int? cost,
         bool splitOuterCollection = false,
         bool isRecord = false})
-    //! CHANGED(tekert) add parameter nodeType
     {
         // See if `const` should be removed.
         if (constKeyword != null &&

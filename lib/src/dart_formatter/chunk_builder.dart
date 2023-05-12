@@ -677,7 +677,6 @@ class ChunkBuilder
         _chunks.add(chunk);
         _pendingFlushLeft = false;
 
-        //! CHANGED(tekert) added _formatter
         var builder = ChunkBuilder._(this, _formatter, _source, chunk.children);
 
         if (indent) builder.indent();
@@ -979,9 +978,9 @@ class ChunkBuilder
 
             if (_pendingPreventDivide) chunk.preventDivide();
         }
+
         _pendingNewlines = 0;
         _pendingNested = false;
-
         return chunk;
     }
 

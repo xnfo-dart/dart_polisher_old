@@ -62,7 +62,7 @@ class Cost
 class Indent
 {
     /// The number of spaces in a block or collection body.
-    static const block = 4;
+    static const block = 2;
 
     /// How much wrapped cascade sections indent.
     static const cascade = 2;

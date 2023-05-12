@@ -82,6 +82,7 @@ class LineWriter
         var cached = _blockCache[key];
         if (cached != null) return cached;
 
+        //! CHANGED(tekert): add _formatter argument
         var writer = LineWriter._(
             chunk.children, _lineEnding, pageWidth, column, _blockCache, _formatter);
         return _blockCache[key] = writer.writeLines();
