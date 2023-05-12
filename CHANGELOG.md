@@ -13,6 +13,7 @@ Upstream changelog: [dart-style changes](https://github.com/dart-lang/dart_style
 How he doesn't see how bad it looks before coding it.. i don't know, and then making dynamic format based on case size, worse.
 still, ExpandedStyle didn't suffer from that, i deleted that heresy as soon as i saw it incoming on commits.
 If someone wants to be protected from these situations on other styles, maybe i can make a new conservative dart_style profile.
+- Hide `--fix` and related options in `--help`. More info from v2.3.1 upstream.
 
 ### Fixes
 
