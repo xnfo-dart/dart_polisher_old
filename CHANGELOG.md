@@ -2,7 +2,9 @@
 >A less opitionated Dart formatter based on the oficial `dart_style` formatter.
 
 ## [Unreleased]
-- Sync updates from upstream.
+- Sync updates from upstream (records, patterns, class modifiers, switch cases).
+- Keep using the old switch case style in Expanded Style. (the new style from upstream is just bad)
+
 
 ### New
 - Ability to export library to Node.js `dart-polisher` npm package.  

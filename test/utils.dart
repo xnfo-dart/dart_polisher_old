@@ -7,7 +7,7 @@ library dart_style.test.utils;
 import 'dart:io';
 import 'dart:mirrors';
 
-import 'package:dart_polisher/dart_polisher.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 import 'package:test_descriptor/test_descriptor.dart' as d;
@@ -268,14 +268,8 @@ void _testFile(String name, String path, Iterable<StyleFix>? baseFixes)
                     isCompilationUnit: isCompilationUnit);
                 var expectedText = expected.text;
 
-                //! CHANGED(tekert): Use dart_style default indentation for unit files testing.
-                var o = FormatterOptions.opt(
-                    tabSizes: CodeIndent(
-                        block: 2, cascade: 2, expression: 4, constructorInitializer: 4),
-                    pageWidth: pageWidth ?? 80,
-                    indent: leadingIndent,
-                    fixes: {...fixes});
-                var formatter = DartFormatter(o);
+                var formatter = DartFormatter(
+                    pageWidth: pageWidth, indent: leadingIndent, fixes: fixes);
 
                 var actual = formatter.formatSource(inputCode);
 

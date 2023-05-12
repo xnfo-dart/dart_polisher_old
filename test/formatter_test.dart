@@ -5,7 +5,7 @@
 @TestOn('vm')
 library dart_style.test.formatter_test;
 
-import 'package:dart_polisher/dart_polisher.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 
 import 'utils.dart';
@@ -69,7 +69,7 @@ void main()
 
     test('adds newline to unit after trailing comment', ()
     {
-        expect(DartFormatter(FormatterOptions()).format('library foo; //zamm'),
+        expect(DartFormatter().format('library foo; //zamm'),
             equals('library foo; //zamm\n'));
     });
 
@@ -100,11 +100,7 @@ void main()
 
     test('preserves initial indent', ()
     {
-        // Use dart_style indent sizes.
-        var formatter = DartFormatter(FormatterOptions(
-            indent: 3,
-            tabSizes: CodeIndent(
-                block: 2, cascade: 2, expression: 4, constructorInitializer: 4)));
+        var formatter = DartFormatter(indent: 3);
         expect(
             formatter.formatStatement('if (foo) {bar;}'),
             equals('   if (foo) {\n'
@@ -121,9 +117,7 @@ void main()
             // will throw an error if it accidentally makes non-whitespace changes
             // as will occur
             var lineEnding = '\t';
-            expect(
-                DartFormatter(FormatterOptions(lineEnding: lineEnding))
-                    .format('var i = 1;'),
+            expect(DartFormatter(lineEnding: lineEnding).format('var i = 1;'),
                 equals('var i = 1;\t'));
         });
 
@@ -146,10 +140,9 @@ void main()
         test('handles Windows line endings in multiline strings', ()
         {
             expect(
-                DartFormatter(FormatterOptions(lineEnding: '\r\n'))
-                    .formatStatement('  """first\r\n'
-                        'second\r\n'
-                        'third"""  ;'),
+                DartFormatter(lineEnding: '\r\n').formatStatement('  """first\r\n'
+                    'second\r\n'
+                    'third"""  ;'),
                 equals('"""first\r\n'
                     'second\r\n'
                     'third""";'));
@@ -160,7 +153,7 @@ void main()
     {
         // Use an invalid line ending character to ensure the formatter will
         // attempt to make non-whitespace changes.
-        var formatter = DartFormatter(FormatterOptions(lineEnding: '%'));
+        var formatter = DartFormatter(lineEnding: '%');
         expect(() => formatter.format('var i = 1;'),
             throwsA(TypeMatcher<UnexpectedOutputException>()));
     });

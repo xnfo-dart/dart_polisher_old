@@ -10,7 +10,6 @@ import 'package:test_descriptor/test_descriptor.dart' as d;
 
 import 'utils.dart';
 
-//TODO (tekert): new options tests when cli interface final names are finalized.
 void main()
 {
     compileCommandExecutable();
@@ -294,10 +293,9 @@ void main()
         test('non-verbose shows description and common options', () async
         {
             var process = await runCommand(['--help']);
-            expect(await process.stdout.next, contains(r'Format Dart source code'));
+            expect(await process.stdout.next, 'Idiomatically format Dart source code.');
             await expectLater(process.stdout, emitsThrough(contains('-o, --output')));
             await expectLater(process.stdout, emitsThrough(contains('--fix')));
-            await expectLater(process.stdout, emitsThrough(contains('-s, --code-style')));
             await expectLater(process.stdout, neverEmits(contains('--summary')));
             await process.shouldExit(0);
         });
@@ -305,12 +303,11 @@ void main()
         test('verbose shows description and all options', () async
         {
             var process = await runCommand(['--help', '--verbose']);
-            expect(await process.stdout.next, contains(r'Format Dart source code'));
+            expect(await process.stdout.next, 'Idiomatically format Dart source code.');
             await expectLater(process.stdout, emitsThrough(contains('-o, --output')));
             await expectLater(process.stdout, emitsThrough(contains('--show')));
             await expectLater(process.stdout, emitsThrough(contains('--summary')));
             await expectLater(process.stdout, emitsThrough(contains('--fix')));
-            await expectLater(process.stdout, emitsThrough(contains('--tab-size')));
             await process.shouldExit(0);
         });
     });
@@ -328,11 +325,11 @@ void main()
         {
             var process = await runCommand(['--fix', '--output=show']);
             process.stdin.writeln('foo({a:1}) {');
-            process.stdin.writeln('    new Bar(const Baz(const []));}');
+            process.stdin.writeln('  new Bar(const Baz(const []));}');
             await process.stdin.close();
 
             expect(await process.stdout.next, 'foo({a = 1}) {');
-            expect(await process.stdout.next, '    Bar(const Baz([]));');
+            expect(await process.stdout.next, '  Bar(const Baz([]));');
             expect(await process.stdout.next, '}');
             await process.shouldExit(0);
         });
@@ -342,11 +339,11 @@ void main()
             var process =
                 await runCommand(['--fix-named-default-separator', '--output=show']);
             process.stdin.writeln('foo({a:1}) {');
-            process.stdin.writeln('    new Bar();}');
+            process.stdin.writeln('  new Bar();}');
             await process.stdin.close();
 
             expect(await process.stdout.next, 'foo({a = 1}) {');
-            expect(await process.stdout.next, '    new Bar();');
+            expect(await process.stdout.next, '  new Bar();');
             expect(await process.stdout.next, '}');
             await process.shouldExit(0);
         });
@@ -355,11 +352,11 @@ void main()
         {
             var process = await runCommand(['--fix-optional-const', '--output=show']);
             process.stdin.writeln('foo({a:1}) {');
-            process.stdin.writeln('    const Bar(const Baz());}');
+            process.stdin.writeln('  const Bar(const Baz());}');
             await process.stdin.close();
 
             expect(await process.stdout.next, 'foo({a: 1}) {');
-            expect(await process.stdout.next, '    const Bar(Baz());');
+            expect(await process.stdout.next, '  const Bar(Baz());');
             expect(await process.stdout.next, '}');
             await process.shouldExit(0);
         });
@@ -368,11 +365,11 @@ void main()
         {
             var process = await runCommand(['--fix-optional-new', '--output=show']);
             process.stdin.writeln('foo({a:1}) {');
-            process.stdin.writeln('    new Bar();}');
+            process.stdin.writeln('  new Bar();}');
             await process.stdin.close();
 
             expect(await process.stdout.next, 'foo({a: 1}) {');
-            expect(await process.stdout.next, '    Bar();');
+            expect(await process.stdout.next, '  Bar();');
             expect(await process.stdout.next, '}');
             await process.shouldExit(0);
         });
@@ -394,7 +391,7 @@ void main()
             await process.stdin.close();
 
             expect(await process.stdout.next, '   main() {');
-            expect(await process.stdout.next, "       '''");
+            expect(await process.stdout.next, "     '''");
             expect(await process.stdout.next, "a flush left multi-line string''';");
             expect(await process.stdout.next, '   }');
             await process.shouldExit(0);
