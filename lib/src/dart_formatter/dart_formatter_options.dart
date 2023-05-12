@@ -72,7 +72,7 @@ enum CodeStyle {
 /// Block means:
 /// block ::= '{' statement* '}'
 /// statement ::= Block | VariableDeclarationStatement | ForStatement | ForEachStatement |
-///  WhileStatement | DoStatement | SwitchStatement | IfStatement | TryStatement |
+///  WhileStatement | DoStatement | SwitchStatement | SwitchExpression | IfStatement | TryStatement |
 ///  BreakStatement | ContinueStatement | ReturnStatement | ExpressionStatement |
 ///  FunctionDeclarationStatement
 ///
@@ -82,7 +82,7 @@ class BodyOpt
     /// Braces '{}' on Block-like Bodys
     ///
     /// These are always newlined.
-    /// Includes: ClassDeclaration | ExtensionDeclaration | MixinDeclaration | SwitchStatement
+    /// Includes: ClassDeclaration | ExtensionDeclaration | MixinDeclaration | SwitchStatement | SwitchExpression
     ///
     /// Excludes: TypedLiteral | EnumDeclaration (These are handled in other options)
     static const int outerBracesOnBlockLike = CompatibleBits.bit1;
