@@ -3066,6 +3066,15 @@ class SourceVisitor extends ThrowingAstVisitor
     @override
     void visitSwitchExpression(SwitchExpression node)
     {
+        if (node.cases.isEmptyBody(node.rightBracket))
+        {
+            // Don't allow splitting an empty switch expression.
+            _visitSwitchValue(node.switchKeyword, node.leftParenthesis, node.expression,
+                node.rightParenthesis);
+            token(node.leftBracket);
+            token(node.rightBracket);
+            return;
+        }
         // Start the rule for splitting between the cases before the value. That
         // way, if the value expression splits, the cases do too. Avoids:
         //
@@ -3078,12 +3087,10 @@ class SourceVisitor extends ThrowingAstVisitor
             node.rightParenthesis);
 
         token(node.leftBracket);
-        builder = builder.startBlock(space: true);
+        builder = builder.startBlock(space: node.cases.isNotEmpty);
 
         visitCommaSeparatedNodes(node.cases, between: split);
 
-        // A switch with no cases isn't syntactically valid, but handle it
-        // gracefully instead of crashing.
         var hasTrailingComma =
             node.cases.isNotEmpty && node.cases.last.commaAfter != null;
         _endBody(node.rightBracket, forceSplit: hasTrailingComma);
@@ -3202,8 +3209,11 @@ class SourceVisitor extends ThrowingAstVisitor
             }
         }
 
-        newline();
-        _endBody(node.rightBracket, forceSplit: true);
+        if (node.members.isNotEmpty)
+        {
+            newline();
+        }
+        _endBody(node.rightBracket, forceSplit: node.members.isNotEmpty);
     }
 
     /// Visits the `switch (expr)` part of a switch statement or expression.

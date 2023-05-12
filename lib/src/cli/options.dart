@@ -56,8 +56,8 @@ void defineFormatOptions(ArgParser parser, {bool verbose = false})
 
     if (verbose) parser.addSeparator('Non-whitespace fixes (off by default):');
 
-    parser.addFlag('fix', negatable: false, help: 'Apply all style fixes.',
-        hide: !verbose);
+    parser.addFlag('fix',
+        negatable: false, help: 'Apply all style fixes.', hide: !verbose);
     for (var fix in StyleFix.all)
     {
         parser.addFlag('fix-${fix.name}',
