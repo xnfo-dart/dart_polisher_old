@@ -1,8 +1,22 @@
 # Changelog
 >A less opitionated Dart formatter based on the official Dart `dart_style` formatter.
 
+Upstream changelog: [dart-style changes](https://github.com/dart-lang/dart_style/blob/main/CHANGELOG.md)
+
 ## [Unreleased]
 
+### New
+
+### Upstream fixes
+- Apply changes from v2.3.1 and remaining fixes from v2.3.0
+- Finally the author decided to forego that abomination of formatting switch cases.
+How he doesn't see how bad it looks before coding it.. i don't know, and then making dynamic format based on case size, worse.
+still, ExpandedStyle didn't suffer from that, i deleted that heresy as soon as i saw it incoming on commits.
+If someone wants to be protected from these situations on other styles, maybe i can make a new conservative dart_style profile.
+
+### Fixes
+
+<br>
 
 ## [0.9.4] - 12/5/2023
 
@@ -21,6 +35,8 @@ Import it using npm: [dart-polisher](https://www.npmjs.com/package/dart-polisher
 
 ### Fixes
 - Grinder build task now accepts relative paths (builds are still relative to ./build dir)
+
+<br>
 
 ## [0.9.2] - 10/10/2022
 - `DartFormatter` constructor argument: `FormatterOptions` argument its now optional.

@@ -3146,43 +3146,10 @@ class SourceVisitor extends ThrowingAstVisitor
         //! CHANGED(tekert): add new argument node type
         _beginBody(node.leftBracket, nodeType: node);
 
-        // If all of the case bodies are small, it looks nice if they go on the same
-        // line as `case`, like:
-        //
-        //   switch (obj) {
-        //     case 1: print('one');
-        //     case 2:
-        //     case 3: print('two or three');
-        //   }
-        //
-        // But it looks bad if some cases are inline and others split:
-        //
-        //   switch (obj) {
-        //     case 1: print('one');
-        //     case 2:
-        //       print('two');
-        //       print('two again');
-        //     case 3: print('two or three');
-        //   }
-        //
-        // So we use a single rule for all cases. If any case splits, because it has
-        // multiple statements, or there is a split in the pattern or body, then
-        // they all split.
-        var caseRule = SplitContainingRule();
-        caseRule.disableSplitOnInnerRules();
-        //! CHANGED(tekert): a little better, but this guy doesn't understand style.. dynamic changes on styles is not ok.
-        if (_formatter.options.style == CodeStyle.ExpandedStyle)
-            builder.startRule(); // <- for the emperor
-        else
-            builder.startLazyRule(caseRule); // <- horus followers,
-
         for (var member in node.members)
         {
             _visitLabels(member.labels);
             token(member.keyword);
-
-            // We want a split in the pattern or bodies to force the cases to split.
-            caseRule.enableSplitOnInnerRules();
 
             if (member is SwitchCase)
             {
@@ -3225,25 +3192,17 @@ class SourceVisitor extends ThrowingAstVisitor
             if (member.statements.isNotEmpty)
             {
                 builder.indent();
-                split();
+                newline();
                 visitNodes(member.statements, between: oneOrTwoNewlines);
                 builder.unindent();
-
-                // We don't want the split between cases to force them to split.
-                caseRule.disableSplitOnInnerRules();
-                oneOrTwoNewlines(preventDivide: true);
+                oneOrTwoNewlines();
             }
             else
             {
-                // We don't want the split between cases to force them to split.
-                caseRule.disableSplitOnInnerRules();
-
                 // Don't preserve blank lines between empty cases.
-                builder.writeNewline(preventDivide: true);
+                builder.writeNewline();
             }
         }
-
-        builder.endRule();
 
         newline();
         _endBody(node.rightBracket, forceSplit: true);
@@ -4741,10 +4700,9 @@ class SourceVisitor extends ThrowingAstVisitor
     /// Allow either one or two newlines to be emitted before the next
     /// non-whitespace token based on whether any blank lines exist in the source
     /// between the last token and the next one.
-    void oneOrTwoNewlines({bool preventDivide = false})
+    void oneOrTwoNewlines()
     {
-        builder.writeNewline(
-            isDouble: _linesBeforeNextToken > 1, preventDivide: preventDivide);
+        builder.writeNewline(isDouble: _linesBeforeNextToken > 1);
     }
 
     /// The number of newlines between the last written token and the next one to
