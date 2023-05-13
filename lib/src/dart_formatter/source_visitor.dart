@@ -3087,10 +3087,16 @@ class SourceVisitor extends ThrowingAstVisitor
             node.rightParenthesis);
 
         //! CHANGED(tekert): add new line on switch statements blocks.
-        if (_formatter.options.style == CodeStyle.ExpandedStyle) newline();
+        if (_formatter.options.style == CodeStyle.ExpandedStyle)
+            _beginBody(node.leftBracket, nodeType: node, space: node.cases.isNotEmpty);
+        else
+        {
+            //! CHANGED(tekert): fix dart_style code.
+            //token(node.leftBracket);
+            //builder = builder.startBlock(space: node.cases.isNotEmpty);
 
-        token(node.leftBracket);
-        builder = builder.startBlock(space: node.cases.isNotEmpty);
+            _beginBody(node.leftBracket, nodeType: node, space: node.cases.isNotEmpty);
+        }
 
         visitCommaSeparatedNodes(node.cases, between: split);
 
@@ -4525,10 +4531,10 @@ class SourceVisitor extends ThrowingAstVisitor
                 (nodeType is! DartPattern) &&
                 (nodeType is! EnumDeclaration) &&
                 (nodeType?.parent
-                    is! SwitchPatternCase) && // Dont format switch Pattern cases on open curly brackets, looks bad
+                    is! SwitchPatternCase) && // They are aready open as of 2.3.1
                 (nodeType is SwitchStatement
                     ? nodeType.members.isNotEmpty
-                    : true) // Use default style on empty switch statements.
+                    : true) // Use default dart_style on empty switch statements until i understand the builder.
             )
         // EnumDeclaration is handled in [visitEnumDeclaration]
         // TypedLiteral, Literal, DartPattern, Assertion, ArgumentList are handled in [_visitCollectionLiteral]
