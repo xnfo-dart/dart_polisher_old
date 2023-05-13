@@ -468,9 +468,32 @@ class SourceVisitor extends ThrowingAstVisitor
         //       stuff
         //     ]
         //       ..add(more);
-        var splitIfOperandsSplit =
-            node.cascadeSections.length > 1 || !node.target.isCollectionLike;
-        if (splitIfOperandsSplit)
+        var target = node.target;
+        var splitIfTargetSplits = true;
+        if (node.cascadeSections.length > 1)
+        {
+            // Always split if there are multiple cascade sections.
+        }
+        else if (target is ListLiteral ||
+            target is RecordLiteral ||
+            target is SetOrMapLiteral)
+        {
+            splitIfTargetSplits = false;
+        }
+        else if (target is InvocationExpression)
+        {
+            // If the target is a call with a trailing comma in the argument list,
+            // treat it like a collection literal.
+            splitIfTargetSplits = !target.argumentList.arguments.hasCommaAfter;
+        }
+        else if (target is InstanceCreationExpression)
+        {
+            // If the target is a call with a trailing comma in the argument list,
+            // treat it like a collection literal.
+            splitIfTargetSplits = !target.argumentList.arguments.hasCommaAfter;
+        }
+
+        if (splitIfTargetSplits)
         {
             builder.startLazyRule(node.allowInline ? Rule() : Rule.hard());
         }
@@ -480,28 +503,23 @@ class SourceVisitor extends ThrowingAstVisitor
         //! CHANGED(tekert) replace Constant with runtime options
         builder.nestExpression(indent: _formatter.options.tabSizes.cascade, now: true);
         //builder.nestExpression(indent: Indent.cascade, now: true);
+
         builder.startBlockArgumentNesting();
 
         // If the cascade section shouldn't cause the cascade to split, end the
         // rule early so it isn't affected by it.
-        if (!splitIfOperandsSplit)
+        if (!splitIfTargetSplits)
         {
             builder.startRule(node.allowInline ? Rule() : Rule.hard());
         }
 
         zeroSplit();
 
-        if (!splitIfOperandsSplit)
-        {
-            builder.endRule();
-        }
+        if (!splitIfTargetSplits) builder.endRule();
 
         visitNodes(node.cascadeSections, between: zeroSplit);
 
-        if (splitIfOperandsSplit)
-        {
-            builder.endRule();
-        }
+        if (splitIfTargetSplits) builder.endRule();
 
         builder.endBlockArgumentNesting();
         builder.unnest();
@@ -3087,15 +3105,13 @@ class SourceVisitor extends ThrowingAstVisitor
             node.rightParenthesis);
 
         //! CHANGED(tekert): add new line on switch statements blocks.
+        //TODO(tekert): check this, test fail when using beginBody on CodeStyle.DartStyle.
         if (_formatter.options.style == CodeStyle.ExpandedStyle)
             _beginBody(node.leftBracket, nodeType: node, space: node.cases.isNotEmpty);
         else
         {
-            //! CHANGED(tekert): fix dart_style code.
-            //token(node.leftBracket);
-            //builder = builder.startBlock(space: node.cases.isNotEmpty);
-
-            _beginBody(node.leftBracket, nodeType: node, space: node.cases.isNotEmpty);
+            token(node.leftBracket);
+            builder = builder.startBlock(space: node.cases.isNotEmpty);
         }
 
         visitCommaSeparatedNodes(node.cases, between: split);

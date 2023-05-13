@@ -16,7 +16,7 @@ still, ExpandedStyle didn't suffer from that, i deleted that heresy as soon as i
 
 ### Fixes
 - ExpandedStyle: Now formats switch expression blocks and empty switch statements.
-- ExpandedStyle: Additional brackets fixes on nested SwitchExpression (upstream had bad coding by not closing open bodys correctly)
+- ExpandedStyle: Additional brackets fixes on nested SwitchExpression
 
 <br>
 
