@@ -21,6 +21,8 @@ TODO doc.
 ```dart run grinder bump```
 
 2. Compile<br>
+```dart run grinder build``` --output='name' optional
+<br>or<br>
 ```dart compile [options] ./bin/format.dart```
 
 

@@ -79,7 +79,7 @@ enum CodeStyle {
 /// Clients may not extend, implement or mix-in this class.
 class BodyOpt
 {
-    /// Braces '{}' on Block-like Bodys
+    /// Braces '{}' on Block-like Bodies
     ///
     /// These are always newlined.
     /// Includes: ClassDeclaration | ExtensionDeclaration | MixinDeclaration | SwitchStatement | SwitchExpression
@@ -98,6 +98,7 @@ class BodyOpt
     /// True means split '{' if contents split, remain folded if false.
     /// Same case with collection literals, looks better if its folded.
     /// That way it can be better distinguished between block-like nodes.
+    ///! NOT IMPLEMENTED.
     // TODO (tekert): not implemented yet, check if it looks good.
     static const int outerBracesOnEnumSmart = CompatibleBits.bit3;
 

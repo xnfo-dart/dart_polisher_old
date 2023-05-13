@@ -3105,9 +3105,15 @@ class SourceVisitor extends ThrowingAstVisitor
             node.rightParenthesis);
 
         //! CHANGED(tekert): add new line on switch statements blocks.
-        //TODO(tekert): check this, test fail when using beginBody on CodeStyle.DartStyle.
-        if (_formatter.options.style == CodeStyle.ExpandedStyle)
-            _beginBody(node.leftBracket, nodeType: node, space: node.cases.isNotEmpty);
+        if (_formatter.options.style.mask & BodyOpt.outerBracesOnBlockLike > 0)
+        {
+            writePrecedingCommentsAndNewlines(node.leftBracket);
+            builder = builder.startBlock(space: false, indent: false);
+            //token(node.leftBracket);
+            _writeText(node.leftBracket.lexeme, node.leftBracket);
+            builder.writeNewline();
+            builder.indent();
+        }
         else
         {
             token(node.leftBracket);
@@ -4538,23 +4544,23 @@ class SourceVisitor extends ThrowingAstVisitor
     void _beginBody(Token leftBracket, {bool space = false, AstNode? nodeType})
     {
         //! CHANGED(tekert) add new line on everything except some collection literals
-        //! (Assertion In contructors and statements, ArgumentList with trailing comma).
+        //!  (Assertion In contructors and statements, ArgumentList with trailing comma).
         //! SwitchPatternCase Blocks by default uses a new line.
         if ((leftBracket.type == TokenType.OPEN_CURLY_BRACKET) &&
                 (_formatter.options.style.mask & BodyOpt.outerBracesOnBlockLike > 0) &&
-                (nodeType is! TypedLiteral) &&
-                (nodeType is! Literal) &&
-                (nodeType is! DartPattern) &&
-                (nodeType is! EnumDeclaration) &&
+                (nodeType is! TypedLiteral) && // Its a typed literal expression.
+                (nodeType is! RecordLiteral) && // Its like a literal expression.
+                (nodeType is! DartPattern) && // Can have literal expressions.
+                (nodeType is! EnumDeclaration) && // Treat it like literals for now.
                 (nodeType?.parent
-                    is! SwitchPatternCase) && // They are aready open as of 2.3.1
+                    is! SwitchPatternCase) && // They are aready open as of ^2.3.0
                 (nodeType is SwitchStatement
                     ? nodeType.members.isNotEmpty
-                    : true) // Use default dart_style on empty switch statements until i understand the builder.
+                    : true) // Use default dart_style on empty switch statements for now 'switch() {}'.
             )
         // EnumDeclaration is handled in [visitEnumDeclaration]
         // TypedLiteral, Literal, DartPattern, Assertion, ArgumentList are handled in [_visitCollectionLiteral]
-        //TODO (tekert): make enums with outer bracket if we expand elements.
+        //TODO (tekert): make enums format with an outer bracket if it splits elements.
         {
             // Another dirty way to write this is:
             // token(leftBracket, before: ()
@@ -4564,7 +4570,7 @@ class SourceVisitor extends ThrowingAstVisitor
             writePrecedingCommentsAndNewlines(leftBracket);
             _beginBodyBlock(_lastToken, space: false, indent: false);
 
-            // Now that we placed the comments, write de left curly bracket
+            // Now that we placed the comments, write de left curly bracket (dont use token() as it writes comments)
             _writeText(leftBracket.lexeme, leftBracket);
 
             // Place the contents on a new indented line

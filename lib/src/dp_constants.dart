@@ -17,10 +17,10 @@ class DPConst
 
     /// The last merge from dart_style
     // Note: Change this manually only when merging all changes from upstream up to *this version
-    static const String FORKED_FROM_DART_STYLE_VERSION = "2.2.5-dev";
+    static const String FORKED_FROM_DART_STYLE_VERSION = "2.3.1";
     static const String FORKED_FROM_DART_STYLE_COMMIT =
-        "https://github.com/dart-lang/dart_style/commit/6d19435c789e07cf1aaa29da019010b002882d39";
-    static const String FORKED_FROM_DART_STYLE_COMMIT_DATE = "Wed Mar 01 2023";
+        "https://github.com/dart-lang/dart_style/commit/4f9681d668987afb9bd6d4f6cbf81bcd350103b2";
+    static const String FORKED_FROM_DART_STYLE_COMMIT_DATE = "Wed May 03 2023";
 }
 
 class DefaultValue

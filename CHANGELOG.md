@@ -5,18 +5,17 @@ Upstream changelog: [dart-style changes](https://github.com/dart-lang/dart_style
 
 ## [Unreleased]
 
-### New
-
 ### Upstream fixes
 - Apply common dart format changes from v2.3.1 and remaining fixes from v2.3.0
-- Finally from upstream they decided to abandon that abomination of SwitchExpressionCase formatting.
+- Finally (from upstream) they decided to abandon that abomination of SwitchExpressionCase formatting.
 How they doesn't see how bad it looks before coding it.. i don't know, and then making dynamic format based on case size, worse.
 still, ExpandedStyle didn't suffer from that, i deleted that heresy as soon as i saw it incoming on commits.
 - Hide `--fix` and related options in `--help`. More info from v2.3.1 upstream.
 
 ### Fixes
-- ExpandedStyle: Now formats switch expression blocks and empty switch statements.
-- ExpandedStyle: Additional brackets fixes on nested SwitchExpression
+- ExpandedStyle: Now formats SwitchExpression blocks and empty SwitchStatement, comments are also handled correctly now.
+- ExpandedStyle: Additional brackets fixes on nested SwitchExpression.
+- Benchmark now uses updated code formatting for comparisons.
 
 <br>
 
