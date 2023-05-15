@@ -1,34 +1,39 @@
 # Dart Polisher [![Formatter](https://shields.io/badge/dart-Formatter_(fork)-green?logo=dart&style=flat-square)](https://github.com/xnfo-dart/dart_polisher) ![Issues](https://img.shields.io/github/issues/xnfo-dart/dart_polisher)
-> Formatter for Dart source code + CLI + options
+> *Forked* Dart code formatter + CLI + custom styles
 
  - Customizable indent sizes *(tab sizes)*  
  - Use tab or spaces for indents  
- - Custom styles  
- - CLI for dir/file formatting  
+ - Additional custom styles  
+ - CLI for dir/file formatting as the original with added options.
 
 ## Download
-- From [Releases](https://github.com/xnfo-dart/dart_polisher/releases)
- ## IDE Extensions
-- [VScode Extension](https://github.com/xnfo-dart/dart-polisher-vscode)
+- Commandline tool: [Releases](https://github.com/xnfo-dart/dart_polisher/releases)
 
-## Features
-TODO doc.
+## IDE Extensions
+- [Link to VScode Extension](https://github.com/xnfo-dart/dart-polisher-vscode)
 
-## Build
-> Until I finish the v1.0.0 release and update the grinder for better quality of life when building, build every step separately fow now.
 
-1. (when releasing tag) Bump version (protocol, app, and dependencies)<br>
-```dart run grinder bump```
-
-2. Compile<br>
-```dart run grinder build``` --output='name' optional
-<br>or<br>
-```dart compile [options] ./bin/format.dart```
-
+---
 
 ### Forked from
->Dart formatter *forked* from [dart_style](https://github.com/dart-lang/dart_style)
+>Dart code formatter *forked* from [dart_style](https://github.com/dart-lang/dart_style)
+<br> Receives patches from upstream.
 
+---
+## Build
+> If executing on the command line, define a dartMain entry point in js, there is an example [here](tool\js_format_service.dart#142)
+
+* Compile Executable:<br>
+```dart run grinder build``` --output='name' (optional)<br>
+* Compile Node.js:<br>
+```dart run grinder node``` --output='name' (optional)<br>
+* Compile Manually:<br>
+```dart compile [options] ./bin/format.dart```
+<br>
+<br>
+* (when releasing tag) Bump version (protocol, app, and dependencies)<br>
+```dart run grinder bump```
+---
 
 ## License
 BSD-3-Clause license
