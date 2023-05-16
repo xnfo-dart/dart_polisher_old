@@ -115,7 +115,7 @@ abstract class FException implements Exception
     // NOTE(tekert): Can't define body of toString because its external,
     // the wrapped exception from js (Error.message) will not point to this.dartException.toString()
     // for now it doesn't matter because if FException is caught the client gets it from 'Error.dartException.message' directly.
-    // comment this line to make js Error.message hook to Error.dartException.toString() wich i prefer not, its confusing from js.
+    // Dart Exceptions has this already defined and is hooked by Dart2js, but in this user defined Extension for JS we cannot.
     @override
     external String toString();
 
@@ -147,7 +147,11 @@ Usage example from generated javascript:
     let sel = {offset: 8, length: 5}
     let ind = {block: 9, cascade: 9,  expression: 9, constructorInitializer: 9};
     let opt = {style: 1, tabSizes: ind, indent: 0, pageWidth: 80, insertSpaces: true, selection: sel};
-    result = exports.formatCode("void a(){int a;}", opt);
+    try {
+      result = exports.formatCode("void a(){int a;}", opt);
+    } catch (e) {
+      console.log(e.dartException.message)
+    }
 
     console.log(result.code);
     console.log(result.selection); // will be null if selection was not given in opt

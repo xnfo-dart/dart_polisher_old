@@ -12,28 +12,23 @@
 ## IDE Extensions
 - [Link to VScode Extension](https://github.com/xnfo-dart/dart-polisher-vscode)
 
-
----
-
-### Forked from
->Dart code formatter *forked* from [dart_style](https://github.com/dart-lang/dart_style)
-<br> Receives patches from upstream.
-
 ---
 ## Build
 > If executing on the command line, define a dartMain entry point in js, there is an example [here](tool\js_format_service.dart#142)
 
-* Compile Executable:<br>
-```dart run grinder build``` --output='name' (optional)<br>
-* Compile Node.js:<br>
-```dart run grinder node``` --output='name' (optional)<br>
-* Compile Manually:<br>
-```dart compile [options] ./bin/format.dart```
-<br>
-<br>
-* (when releasing tag) Bump version (protocol, app, and dependencies)<br>
-```dart run grinder bump```
+* Compile to Executable:<br>
+```sh 
+dart run grinder build [--output='name'] #defaults to 'build/dartpolish'
+```
+* Compile to Node.js:
+
+```sh 
+dart run grinder node``` #outputs in 'dist/node/'
+```
+
 ---
+
+>Dart code formatter *forked* from [dart_style](https://github.com/dart-lang/dart_style)
 
 ## License
 BSD-3-Clause license

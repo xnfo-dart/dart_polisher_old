@@ -86,14 +86,14 @@ declare namespace Dart {
 	/*
 		Dart2js Exceptions are wrapped in javascript Error objects.
 		An aditional dartException property is defined in the Error object.
-		This is defined in dart-polisher typings in the Dart namespace as 'interface Exception'.
+		This is defined in dart-polisher typescript typings in the Dart namespace as 'interface Exception'.
 
-		So an thrown object from Dart looks like this: (extends from Error)
+		So an thrown object from Dart in typesscript looks like this: (extends from Error)
 		interface Exception {
 			name: string, 		// inherited from Error
 			message: string, 	// inherited from Error
 			stack?: string, 	// inherited from Error
-			dartException: any
+			dartException: any  // Dart thrown Object
 		}
 
 		Exception.message is hooked to dartException.toString() method.
