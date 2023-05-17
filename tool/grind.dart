@@ -172,7 +172,7 @@ Future<void> nodePublish() async
             " ${version.build.reduce((v, e) => "$v $e")}."
             " Are you sure? use --force flag to confirm";
 
-    var out = FilePath("dist").join("node");
+    var out = FilePath(".").join("dist").join("node");
     run("npm", arguments: ["publish", out.path, dryrun ? "--dry-run" : ""]);
 
     log("Package for node had been published: ${out.asDirectory.absolute}");
