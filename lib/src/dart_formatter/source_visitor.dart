@@ -468,9 +468,32 @@ class SourceVisitor extends ThrowingAstVisitor
         //       stuff
         //     ]
         //       ..add(more);
-        var splitIfOperandsSplit =
-            node.cascadeSections.length > 1 || !node.target.isCollectionLike;
-        if (splitIfOperandsSplit)
+        var target = node.target;
+        var splitIfTargetSplits = true;
+        if (node.cascadeSections.length > 1)
+        {
+            // Always split if there are multiple cascade sections.
+        }
+        else if (target is ListLiteral ||
+            target is RecordLiteral ||
+            target is SetOrMapLiteral)
+        {
+            splitIfTargetSplits = false;
+        }
+        else if (target is InvocationExpression)
+        {
+            // If the target is a call with a trailing comma in the argument list,
+            // treat it like a collection literal.
+            splitIfTargetSplits = !target.argumentList.arguments.hasCommaAfter;
+        }
+        else if (target is InstanceCreationExpression)
+        {
+            // If the target is a call with a trailing comma in the argument list,
+            // treat it like a collection literal.
+            splitIfTargetSplits = !target.argumentList.arguments.hasCommaAfter;
+        }
+
+        if (splitIfTargetSplits)
         {
             builder.startLazyRule(node.allowInline ? Rule() : Rule.hard());
         }
@@ -480,28 +503,23 @@ class SourceVisitor extends ThrowingAstVisitor
         //! CHANGED(tekert) replace Constant with runtime options
         builder.nestExpression(indent: _formatter.options.tabSizes.cascade, now: true);
         //builder.nestExpression(indent: Indent.cascade, now: true);
+
         builder.startBlockArgumentNesting();
 
         // If the cascade section shouldn't cause the cascade to split, end the
         // rule early so it isn't affected by it.
-        if (!splitIfOperandsSplit)
+        if (!splitIfTargetSplits)
         {
             builder.startRule(node.allowInline ? Rule() : Rule.hard());
         }
 
         zeroSplit();
 
-        if (!splitIfOperandsSplit)
-        {
-            builder.endRule();
-        }
+        if (!splitIfTargetSplits) builder.endRule();
 
         visitNodes(node.cascadeSections, between: zeroSplit);
 
-        if (splitIfOperandsSplit)
-        {
-            builder.endRule();
-        }
+        if (splitIfTargetSplits) builder.endRule();
 
         builder.endBlockArgumentNesting();
         builder.unnest();
@@ -650,6 +668,7 @@ class SourceVisitor extends ThrowingAstVisitor
         modifier(node.finalKeyword);
         modifier(node.sealedKeyword);
         modifier(node.mixinKeyword);
+        modifier(node.inlineKeyword);
         token(node.classKeyword);
         space();
         token(node.name);
@@ -2475,9 +2494,6 @@ class SourceVisitor extends ThrowingAstVisitor
 
         builder.nestExpression();
         modifier(node.baseKeyword);
-        modifier(node.interfaceKeyword);
-        modifier(node.finalKeyword);
-        modifier(node.sealedKeyword);
         token(node.mixinKeyword);
         space();
         token(node.name);
@@ -3068,6 +3084,15 @@ class SourceVisitor extends ThrowingAstVisitor
     @override
     void visitSwitchExpression(SwitchExpression node)
     {
+        if (node.cases.isEmptyBody(node.rightBracket))
+        {
+            // Don't allow splitting an empty switch expression.
+            _visitSwitchValue(node.switchKeyword, node.leftParenthesis, node.expression,
+                node.rightParenthesis);
+            token(node.leftBracket);
+            token(node.rightBracket);
+            return;
+        }
         // Start the rule for splitting between the cases before the value. That
         // way, if the value expression splits, the cases do too. Avoids:
         //
@@ -3079,13 +3104,24 @@ class SourceVisitor extends ThrowingAstVisitor
         _visitSwitchValue(node.switchKeyword, node.leftParenthesis, node.expression,
             node.rightParenthesis);
 
-        token(node.leftBracket);
-        builder = builder.startBlock(space: true);
+        //! CHANGED(tekert): add new line on switch statements blocks.
+        if (_formatter.options.style.mask & BodyOpt.outerBracesOnBlockLike > 0)
+        {
+            writePrecedingCommentsAndNewlines(node.leftBracket);
+            builder = builder.startBlock(space: false, indent: false);
+            //token(node.leftBracket);
+            _writeText(node.leftBracket.lexeme, node.leftBracket);
+            builder.writeNewline();
+            builder.indent();
+        }
+        else
+        {
+            token(node.leftBracket);
+            builder = builder.startBlock(space: node.cases.isNotEmpty);
+        }
 
         visitCommaSeparatedNodes(node.cases, between: split);
 
-        // A switch with no cases isn't syntactically valid, but handle it
-        // gracefully instead of crashing.
         var hasTrailingComma =
             node.cases.isNotEmpty && node.cases.last.commaAfter != null;
         _endBody(node.rightBracket, forceSplit: hasTrailingComma);
@@ -3094,11 +3130,59 @@ class SourceVisitor extends ThrowingAstVisitor
     @override
     void visitSwitchExpressionCase(SwitchExpressionCase node)
     {
+        // If the pattern is a series of `||` patterns, then flatten them out and
+        // format them like empty cases with fallthrough in a switch statement
+        // instead of like a single indented binary pattern. Prefer:
+        //
+        //   e = switch (obj) {
+        //     constant1 ||
+        //     constant2 ||
+        //     constant3 =>
+        //       body
+        //   };
+        //
+        // Instead of:
+        //
+        //   e = switch (obj) {
+        //     constant1 ||
+        //        constant2 ||
+        //        constant3 =>
+        //       body
+        //   };
+        var orBranches = <DartPattern>[];
+        var orTokens = <Token>[];
+
+        void flattenOr(DartPattern e)
+        {
+            if (e is! LogicalOrPattern)
+            {
+                orBranches.add(e);
+            }
+            else
+            {
+                flattenOr(e.leftOperand);
+                orTokens.add(e.operator);
+                flattenOr(e.rightOperand);
+            }
+        }
+
+        flattenOr(node.guardedPattern.pattern);
+
         // Wrap the rule for splitting after "=>" around the pattern so that a
         // split in the pattern forces the expression to move to the next line too.
         builder.startLazyRule();
 
-        // Wrap the expression's nesting around the pattern too so that a split in
+        // Write the "||" operands up to the last one.
+        for (var i = 0; i < orBranches.length - 1; i++)
+        {
+            // Note that orBranches will always have one more element than orTokens.
+            visit(orBranches[i]);
+            space();
+            token(orTokens[i]);
+            split();
+        }
+
+        // Wrap the expression's nesting around the final pattern so that a split in
         // the pattern is indented farther then the body expression. Used +2 indent
         // because switch expressions are block-like, similar to how we split the
         // bodies of if and for elements in collections.
@@ -3107,11 +3191,7 @@ class SourceVisitor extends ThrowingAstVisitor
         builder.nestExpression(indent: _formatter.options.tabSizes.block);
 
         var whenClause = node.guardedPattern.whenClause;
-        if (whenClause == null)
-        {
-            visit(node.guardedPattern.pattern);
-        }
-        else
+        if (whenClause != null)
         {
             // Wrap the when clause rule around the pattern so that if the pattern
             // splits then we split before "when" too.
@@ -3119,7 +3199,14 @@ class SourceVisitor extends ThrowingAstVisitor
             //! CHANGED(tekert) replace Constant with runtime options
             //builder.nestExpression(indent: Indent.block);
             builder.nestExpression(indent: _formatter.options.tabSizes.block);
-            visit(node.guardedPattern.pattern);
+        }
+
+        // Write the last pattern in the "||" chain. If the case pattern isn't an
+        // "||" pattern at all, this writes the one pattern.
+        visit(orBranches.last);
+
+        if (whenClause != null)
+        {
             split();
             builder.startBlockArgumentNesting();
             _visitWhenClause(whenClause);
@@ -3131,10 +3218,12 @@ class SourceVisitor extends ThrowingAstVisitor
         space();
         token(node.arrow);
         split();
-
         builder.endRule();
 
+        builder.startBlockArgumentNesting();
         visit(node.expression);
+        builder.endBlockArgumentNesting();
+
         builder.unnest();
     }
 
@@ -3146,43 +3235,10 @@ class SourceVisitor extends ThrowingAstVisitor
         //! CHANGED(tekert): add new argument node type
         _beginBody(node.leftBracket, nodeType: node);
 
-        // If all of the case bodies are small, it looks nice if they go on the same
-        // line as `case`, like:
-        //
-        //   switch (obj) {
-        //     case 1: print('one');
-        //     case 2:
-        //     case 3: print('two or three');
-        //   }
-        //
-        // But it looks bad if some cases are inline and others split:
-        //
-        //   switch (obj) {
-        //     case 1: print('one');
-        //     case 2:
-        //       print('two');
-        //       print('two again');
-        //     case 3: print('two or three');
-        //   }
-        //
-        // So we use a single rule for all cases. If any case splits, because it has
-        // multiple statements, or there is a split in the pattern or body, then
-        // they all split.
-        var caseRule = SplitContainingRule();
-        caseRule.disableSplitOnInnerRules();
-        //! CHANGED(tekert): a little better, but this guy doesn't understand style.. dynamic changes on styles is not ok.
-        if (_formatter.options.style == CodeStyle.ExpandedStyle)
-            builder.startRule(); // <- for the emperor
-        else
-            builder.startLazyRule(caseRule); // <- horus followers,
-
         for (var member in node.members)
         {
             _visitLabels(member.labels);
             token(member.keyword);
-
-            // We want a split in the pattern or bodies to force the cases to split.
-            caseRule.enableSplitOnInnerRules();
 
             if (member is SwitchCase)
             {
@@ -3225,28 +3281,23 @@ class SourceVisitor extends ThrowingAstVisitor
             if (member.statements.isNotEmpty)
             {
                 builder.indent();
-                split();
+                newline();
                 visitNodes(member.statements, between: oneOrTwoNewlines);
                 builder.unindent();
-
-                // We don't want the split between cases to force them to split.
-                caseRule.disableSplitOnInnerRules();
-                oneOrTwoNewlines(preventDivide: true);
+                oneOrTwoNewlines();
             }
             else
             {
-                // We don't want the split between cases to force them to split.
-                caseRule.disableSplitOnInnerRules();
-
                 // Don't preserve blank lines between empty cases.
-                builder.writeNewline(preventDivide: true);
+                builder.writeNewline();
             }
         }
 
-        builder.endRule();
-
-        newline();
-        _endBody(node.rightBracket, forceSplit: true);
+        if (node.members.isNotEmpty)
+        {
+            newline();
+        }
+        _endBody(node.rightBracket, forceSplit: node.members.isNotEmpty);
     }
 
     /// Visits the `switch (expr)` part of a switch statement or expression.
@@ -4493,18 +4544,23 @@ class SourceVisitor extends ThrowingAstVisitor
     void _beginBody(Token leftBracket, {bool space = false, AstNode? nodeType})
     {
         //! CHANGED(tekert) add new line on everything except some collection literals
-        //! (Assertion In contructors and statements, ArgumentList with trailing comma).
+        //!  (Assertion In contructors and statements, ArgumentList with trailing comma).
         //! SwitchPatternCase Blocks by default uses a new line.
         if ((leftBracket.type == TokenType.OPEN_CURLY_BRACKET) &&
-            (_formatter.options.style.mask & BodyOpt.outerBracesOnBlockLike > 0) &&
-            (nodeType is! TypedLiteral) &&
-            (nodeType is! Literal) &&
-            (nodeType is! DartPattern) &&
-            (nodeType is! EnumDeclaration) &&
-            (nodeType?.parent is! SwitchPatternCase))
+                (_formatter.options.style.mask & BodyOpt.outerBracesOnBlockLike > 0) &&
+                (nodeType is! TypedLiteral) && // Its a typed literal expression.
+                (nodeType is! RecordLiteral) && // Its like a literal expression.
+                (nodeType is! DartPattern) && // Can have literal expressions.
+                (nodeType is! EnumDeclaration) && // Treat it like literals for now.
+                (nodeType?.parent
+                    is! SwitchPatternCase) && // They are aready open as of ^2.3.0
+                (nodeType is SwitchStatement
+                    ? nodeType.members.isNotEmpty
+                    : true) // Use default dart_style on empty switch statements for now 'switch() {}'.
+            )
         // EnumDeclaration is handled in [visitEnumDeclaration]
         // TypedLiteral, Literal, DartPattern, Assertion, ArgumentList are handled in [_visitCollectionLiteral]
-        //TODO (tekert): make enums with outer bracket if we expand elements.
+        //TODO (tekert): make enums format with an outer bracket if it splits elements.
         {
             // Another dirty way to write this is:
             // token(leftBracket, before: ()
@@ -4514,7 +4570,7 @@ class SourceVisitor extends ThrowingAstVisitor
             writePrecedingCommentsAndNewlines(leftBracket);
             _beginBodyBlock(_lastToken, space: false, indent: false);
 
-            // Now that we placed the comments, write de left curly bracket
+            // Now that we placed the comments, write de left curly bracket (dont use token() as it writes comments)
             _writeText(leftBracket.lexeme, leftBracket);
 
             // Place the contents on a new indented line
@@ -4741,10 +4797,9 @@ class SourceVisitor extends ThrowingAstVisitor
     /// Allow either one or two newlines to be emitted before the next
     /// non-whitespace token based on whether any blank lines exist in the source
     /// between the last token and the next one.
-    void oneOrTwoNewlines({bool preventDivide = false})
+    void oneOrTwoNewlines()
     {
-        builder.writeNewline(
-            isDouble: _linesBeforeNextToken > 1, preventDivide: preventDivide);
+        builder.writeNewline(isDouble: _linesBeforeNextToken > 1);
     }
 
     /// The number of newlines between the last written token and the next one to

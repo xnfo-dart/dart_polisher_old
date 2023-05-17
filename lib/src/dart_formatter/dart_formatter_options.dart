@@ -72,17 +72,17 @@ enum CodeStyle {
 /// Block means:
 /// block ::= '{' statement* '}'
 /// statement ::= Block | VariableDeclarationStatement | ForStatement | ForEachStatement |
-///  WhileStatement | DoStatement | SwitchStatement | IfStatement | TryStatement |
+///  WhileStatement | DoStatement | SwitchStatement | SwitchExpression | IfStatement | TryStatement |
 ///  BreakStatement | ContinueStatement | ReturnStatement | ExpressionStatement |
 ///  FunctionDeclarationStatement
 ///
 /// Clients may not extend, implement or mix-in this class.
 class BodyOpt
 {
-    /// Braces '{}' on Block-like Bodys
+    /// Braces '{}' on Block-like Bodies
     ///
     /// These are always newlined.
-    /// Includes: ClassDeclaration | ExtensionDeclaration | MixinDeclaration | SwitchStatement
+    /// Includes: ClassDeclaration | ExtensionDeclaration | MixinDeclaration | SwitchStatement | SwitchExpression
     ///
     /// Excludes: TypedLiteral | EnumDeclaration (These are handled in other options)
     static const int outerBracesOnBlockLike = CompatibleBits.bit1;
@@ -98,6 +98,7 @@ class BodyOpt
     /// True means split '{' if contents split, remain folded if false.
     /// Same case with collection literals, looks better if its folded.
     /// That way it can be better distinguished between block-like nodes.
+    ///! NOT IMPLEMENTED.
     // TODO (tekert): not implemented yet, check if it looks good.
     static const int outerBracesOnEnumSmart = CompatibleBits.bit3;
 

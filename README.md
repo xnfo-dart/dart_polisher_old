@@ -1,32 +1,34 @@
 # Dart Polisher [![Formatter](https://shields.io/badge/dart-Formatter_(fork)-green?logo=dart&style=flat-square)](https://github.com/xnfo-dart/dart_polisher) ![Issues](https://img.shields.io/github/issues/xnfo-dart/dart_polisher)
-> Formatter for Dart source code + CLI + options
+> *Forked* Dart code formatter + CLI + custom styles
 
  - Customizable indent sizes *(tab sizes)*  
  - Use tab or spaces for indents  
- - Custom styles  
- - CLI for dir/file formatting  
+ - Additional custom styles  
+ - CLI for dir/file formatting as the original with added options.
 
 ## Download
-- From [Releases](https://github.com/xnfo-dart/dart_polisher/releases)
- ## IDE Extensions
-- [VScode Extension](https://github.com/xnfo-dart/dart-polisher-vscode)
+- Commandline tool: [Releases](https://github.com/xnfo-dart/dart_polisher/releases)
 
-## Features
-TODO doc.
+## IDE Extensions
+- [Link to VScode Extension](https://github.com/xnfo-dart/dart-polisher-vscode)
 
+---
 ## Build
-> Until I finish the v1.0.0 release and update the grinder for better quality of life when building, build every step separately fow now.
+> If executing on the command line, define a dartMain entry point in js, there is an example [here](tool\js_format_service.dart#142)
 
-1. (when releasing tag) Bump version (protocol, app, and dependencies)<br>
-```dart run grinder bump```
+* Compile to Executable:<br>
+```sh 
+dart run grinder build [--output='name'] #defaults to 'build/dartpolish'
+```
+* Compile to Node.js:
 
-2. Compile<br>
-```dart compile [options] ./bin/format.dart```
+```sh 
+dart run grinder node``` #outputs in 'dist/node/'
+```
 
+---
 
-### Forked from
->Dart formatter *forked* from [dart_style](https://github.com/dart-lang/dart_style)
-
+>Dart code formatter *forked* from [dart_style](https://github.com/dart-lang/dart_style)
 
 ## License
 BSD-3-Clause license

@@ -172,6 +172,125 @@ class BacktrackingSolver {
       : type = type,
         sources = sources,
         cache = new PubspecCache(type, sources) {
+    // Single statement case switch
+    switch (region){
+      case Region.everywhere:
+          return 0.45;
+      case Region.n:
+          return lerpDouble(pos.y, 0, height, min, max);
+        case Region.e:
+          return lerpDouble(pos.x, 0, width, min, max);
+      case Region.w:
+          return lerpDouble(pos.x, 0, width, max, min);
+    }
+    // A fairly large switch statement.
+    switch (region) {
+      case Region.everywhere:
+        return 0.45;
+      case Region.n:
+        return lerpDouble(pos.y, 0, height, min, max);
+      case Region.ne:
+        var distance = math.max(width - pos.x - 1, pos.y);
+        var range = math.min(width, height);
+        return lerpDouble(distance, 0, range, min, max);
+      case Region.e:
+        return lerpDouble(pos.x, 0, width, min, max);
+      case Region.se:
+        var distance = math.max(width - pos.x - 1, height - pos.y - 1);
+        var range = math.min(width, height);
+        return lerpDouble(distance, 0, range, min, max);
+      case Region.s:
+        return lerpDouble(pos.y, 0, height, max, min);
+      case Region.sw:
+        var distance = math.max(pos.x, height - pos.y - 1);
+        var range = math.min(width, height);
+        return lerpDouble(distance, 0, range, min, max);
+      case Region.w:
+        return lerpDouble(pos.x, 0, width, max, min);
+      case Region.nw:
+        var distance = math.max(pos.x, pos.y);
+        var range = math.min(width, height);
+        return lerpDouble(distance, 0, range, min, max);
+      case Region.everywhere:
+        return 0.45;
+      case Region.n:
+        return lerpDouble(pos.y, 0, height, min, max);
+      case Region.ne:
+        var distance = math.max(width - pos.x - 1, pos.y);
+        var range = math.min(width, height);
+        return lerpDouble(distance, 0, range, min, max);
+      case Region.e:
+        return lerpDouble(pos.x, 0, width, min, max);
+      case Region.se:
+        var distance = math.max(width - pos.x - 1, height - pos.y - 1);
+        var range = math.min(width, height);
+        return lerpDouble(distance, 0, range, min, max);
+      case Region.s:
+        return lerpDouble(pos.y, 0, height, max, min);
+      case Region.sw:
+        var distance = math.max(pos.x, height - pos.y - 1);
+        var range = math.min(width, height);
+        return lerpDouble(distance, 0, range, min, max);
+      case Region.w:
+        return lerpDouble(pos.x, 0, width, max, min);
+      case Region.nw:
+        var distance = math.max(pos.x, pos.y);
+        var range = math.min(width, height);
+        return lerpDouble(distance, 0, range, min, max);
+      case Region.everywhere:
+        return 0.45;
+      case Region.n:
+        return lerpDouble(pos.y, 0, height, min, max);
+      case Region.ne:
+        var distance = math.max(width - pos.x - 1, pos.y);
+        var range = math.min(width, height);
+        return lerpDouble(distance, 0, range, min, max);
+      case Region.e:
+        return lerpDouble(pos.x, 0, width, min, max);
+      case Region.se:
+        var distance = math.max(width - pos.x - 1, height - pos.y - 1);
+        var range = math.min(width, height);
+        return lerpDouble(distance, 0, range, min, max);
+      case Region.s:
+        return lerpDouble(pos.y, 0, height, max, min);
+      case Region.sw:
+        var distance = math.max(pos.x, height - pos.y - 1);
+        var range = math.min(width, height);
+        return lerpDouble(distance, 0, range, min, max);
+      case Region.w:
+        return lerpDouble(pos.x, 0, width, max, min);
+      case Region.nw:
+        var distance = math.max(pos.x, pos.y);
+        var range = math.min(width, height);
+        return lerpDouble(distance, 0, range, min, max);
+      case Region.everywhere:
+        return 0.45;
+      case Region.n:
+        return lerpDouble(pos.y, 0, height, min, max);
+      case Region.ne:
+        var distance = math.max(width - pos.x - 1, pos.y);
+        var range = math.min(width, height);
+        return lerpDouble(distance, 0, range, min, max);
+      case Region.e:
+        return lerpDouble(pos.x, 0, width, min, max);
+      case Region.se:
+        var distance = math.max(width - pos.x - 1, height - pos.y - 1);
+        var range = math.min(width, height);
+        return lerpDouble(distance, 0, range, min, max);
+      case Region.s:
+        return lerpDouble(pos.y, 0, height, max, min);
+      case Region.sw:
+        var distance = math.max(pos.x, height - pos.y - 1);
+        var range = math.min(width, height);
+        return lerpDouble(distance, 0, range, min, max);
+      case Region.w:
+        return lerpDouble(pos.x, 0, width, max, min);
+      case Region.nw:
+        var distance = math.max(pos.x, pos.y);
+        var range = math.min(width, height);
+        return lerpDouble(distance, 0, range, min, max);
+    }
+
     for (var package in useLatest) {
       _forceLatest.add(package);
     }
@@ -932,10 +1051,9 @@ void _validateSdkConstraint(Pubspec pubspec) {
       pubspec.name,
       'Package ${pubspec.name} requires SDK version '
           '${pubspec.environment.sdkVersion} but the current SDK is ' '${sdk.version}.');
-}
-""";
+}""";
 
-/// Uses dart_style (vs 2.2.4) with tabSize 4.
+/// Uses dart_style (vs 2.3.1) with tabSize 4. (don't forget newline at the end)
 const String after =
     r"""// Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
@@ -1109,6 +1227,125 @@ class BacktrackingSolver {
         : type = type,
           sources = sources,
           cache = new PubspecCache(type, sources) {
+        // Single statement case switch
+        switch (region) {
+            case Region.everywhere:
+                return 0.45;
+            case Region.n:
+                return lerpDouble(pos.y, 0, height, min, max);
+            case Region.e:
+                return lerpDouble(pos.x, 0, width, min, max);
+            case Region.w:
+                return lerpDouble(pos.x, 0, width, max, min);
+        }
+        // A fairly large switch statement.
+        switch (region) {
+            case Region.everywhere:
+                return 0.45;
+            case Region.n:
+                return lerpDouble(pos.y, 0, height, min, max);
+            case Region.ne:
+                var distance = math.max(width - pos.x - 1, pos.y);
+                var range = math.min(width, height);
+                return lerpDouble(distance, 0, range, min, max);
+            case Region.e:
+                return lerpDouble(pos.x, 0, width, min, max);
+            case Region.se:
+                var distance = math.max(width - pos.x - 1, height - pos.y - 1);
+                var range = math.min(width, height);
+                return lerpDouble(distance, 0, range, min, max);
+            case Region.s:
+                return lerpDouble(pos.y, 0, height, max, min);
+            case Region.sw:
+                var distance = math.max(pos.x, height - pos.y - 1);
+                var range = math.min(width, height);
+                return lerpDouble(distance, 0, range, min, max);
+            case Region.w:
+                return lerpDouble(pos.x, 0, width, max, min);
+            case Region.nw:
+                var distance = math.max(pos.x, pos.y);
+                var range = math.min(width, height);
+                return lerpDouble(distance, 0, range, min, max);
+            case Region.everywhere:
+                return 0.45;
+            case Region.n:
+                return lerpDouble(pos.y, 0, height, min, max);
+            case Region.ne:
+                var distance = math.max(width - pos.x - 1, pos.y);
+                var range = math.min(width, height);
+                return lerpDouble(distance, 0, range, min, max);
+            case Region.e:
+                return lerpDouble(pos.x, 0, width, min, max);
+            case Region.se:
+                var distance = math.max(width - pos.x - 1, height - pos.y - 1);
+                var range = math.min(width, height);
+                return lerpDouble(distance, 0, range, min, max);
+            case Region.s:
+                return lerpDouble(pos.y, 0, height, max, min);
+            case Region.sw:
+                var distance = math.max(pos.x, height - pos.y - 1);
+                var range = math.min(width, height);
+                return lerpDouble(distance, 0, range, min, max);
+            case Region.w:
+                return lerpDouble(pos.x, 0, width, max, min);
+            case Region.nw:
+                var distance = math.max(pos.x, pos.y);
+                var range = math.min(width, height);
+                return lerpDouble(distance, 0, range, min, max);
+            case Region.everywhere:
+                return 0.45;
+            case Region.n:
+                return lerpDouble(pos.y, 0, height, min, max);
+            case Region.ne:
+                var distance = math.max(width - pos.x - 1, pos.y);
+                var range = math.min(width, height);
+                return lerpDouble(distance, 0, range, min, max);
+            case Region.e:
+                return lerpDouble(pos.x, 0, width, min, max);
+            case Region.se:
+                var distance = math.max(width - pos.x - 1, height - pos.y - 1);
+                var range = math.min(width, height);
+                return lerpDouble(distance, 0, range, min, max);
+            case Region.s:
+                return lerpDouble(pos.y, 0, height, max, min);
+            case Region.sw:
+                var distance = math.max(pos.x, height - pos.y - 1);
+                var range = math.min(width, height);
+                return lerpDouble(distance, 0, range, min, max);
+            case Region.w:
+                return lerpDouble(pos.x, 0, width, max, min);
+            case Region.nw:
+                var distance = math.max(pos.x, pos.y);
+                var range = math.min(width, height);
+                return lerpDouble(distance, 0, range, min, max);
+            case Region.everywhere:
+                return 0.45;
+            case Region.n:
+                return lerpDouble(pos.y, 0, height, min, max);
+            case Region.ne:
+                var distance = math.max(width - pos.x - 1, pos.y);
+                var range = math.min(width, height);
+                return lerpDouble(distance, 0, range, min, max);
+            case Region.e:
+                return lerpDouble(pos.x, 0, width, min, max);
+            case Region.se:
+                var distance = math.max(width - pos.x - 1, height - pos.y - 1);
+                var range = math.min(width, height);
+                return lerpDouble(distance, 0, range, min, max);
+            case Region.s:
+                return lerpDouble(pos.y, 0, height, max, min);
+            case Region.sw:
+                var distance = math.max(pos.x, height - pos.y - 1);
+                var range = math.min(width, height);
+                return lerpDouble(distance, 0, range, min, max);
+            case Region.w:
+                return lerpDouble(pos.x, 0, width, max, min);
+            case Region.nw:
+                var distance = math.max(pos.x, pos.y);
+                var range = math.min(width, height);
+                return lerpDouble(distance, 0, range, min, max);
+        }
+
         for (var package in useLatest) {
             _forceLatest.add(package);
         }
@@ -1833,4 +2070,5 @@ void _validateSdkConstraint(Pubspec pubspec) {
         'Package ${pubspec.name} requires SDK version '
         '${pubspec.environment.sdkVersion} but the current SDK is '
         '${sdk.version}.');
-}""";
+}
+""";

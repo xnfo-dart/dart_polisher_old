@@ -296,7 +296,6 @@ void main()
             var process = await runCommand(['--help']);
             expect(await process.stdout.next, contains(r'Format Dart source code'));
             await expectLater(process.stdout, emitsThrough(contains('-o, --output')));
-            await expectLater(process.stdout, emitsThrough(contains('--fix')));
             await expectLater(process.stdout, emitsThrough(contains('-s, --code-style')));
             await expectLater(process.stdout, neverEmits(contains('--summary')));
             await process.shouldExit(0);

@@ -17,7 +17,7 @@ tool/genhtml.perl
 # vscode not necessarily needed for dart projects.
 .vscode/
 
-# Dart2js output 'dart run grinder node' except ts typings
+# Dart2js output 'dart run grinder node' except typescript typings
 /dist/**
 !/dist/node/
 !/dist/node/dart-polisher.d.ts

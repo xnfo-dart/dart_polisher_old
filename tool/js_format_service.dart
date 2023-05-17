@@ -14,13 +14,12 @@ abstract class FResult
     external FRange get selection;
 }
 
-@JS()
-@anonymous
-
 /// Selection will be as close to matching the original as possible, but
 /// whitespace at the beginning or end of the selected region will be ignored.
 /// If preserving selection information is not required, null can be
 /// specified for both the selection offset and selection length.
+@JS()
+@anonymous
 abstract class FRange
 {
     external factory FRange({int? offset, int? length});
@@ -113,9 +112,10 @@ abstract class FException implements Exception
         required String message,
         required Exception originalException});
 
-    // TODO(tekert): can't define body of toString because is external,
+    // NOTE(tekert): Can't define body of toString because its external,
     // the wrapped exception from js (Error.message) will not point to this.dartException.toString()
-    // for now is doesn't matter because if FException is caught the client gets it from 'Error.dartException.message' directly.
+    // for now it doesn't matter because if FException is caught the client gets it from 'Error.dartException.message' directly.
+    // Dart Exceptions has this already defined and is hooked by Dart2js, but in this user defined Extension for JS we cannot.
     @override
     external String toString();
 
@@ -146,8 +146,12 @@ Usage example from generated javascript:
 
     let sel = {offset: 8, length: 5}
     let ind = {block: 9, cascade: 9,  expression: 9, constructorInitializer: 9};
-    let opt = {style: 1, tabSizes: i, indent: 0, pageWidth: 80, insertSpaces: true, selection: sel};
-    result = exports.formatCode("void a(){int a;}", opt);
+    let opt = {style: 1, tabSizes: ind, indent: 0, pageWidth: 80, insertSpaces: true, selection: sel};
+    try {
+      result = exports.formatCode("void a(){int a;}", opt);
+    } catch (e) {
+      console.log(e.dartException.message)
+    }
 
     console.log(result.code);
     console.log(result.selection); // will be null if selection was not given in opt

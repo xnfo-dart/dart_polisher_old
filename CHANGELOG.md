@@ -1,7 +1,27 @@
 # Changelog
 >A less opitionated Dart formatter based on the official Dart `dart_style` formatter.
 
+Upstream changelog: [dart_style changelog](https://github.com/dart-lang/dart_style/blob/main/CHANGELOG.md)
+
 ## [Unreleased]
+
+<br>
+
+## [0.9.5] - 17/5/2023
+
+### Upstream fixes
+- Apply patches up to released dart_style v2.3.1
+- Finally (from upstream) they decided to abandon that abomination of SwitchExpressionCase formatting.
+How they doesn't see how bad it looks before coding it.. i don't know, and then making dynamic format based on case size, worse.
+still, ExpandedStyle didn't suffer from that, i deleted that heresy as soon as i saw it incoming on commits.
+- Hide `--fix` and related options in `--help`. More info from v2.3.1 upstream.
+
+### Fixes
+- ExpandedStyle: Now formats SwitchExpression blocks and empty SwitchStatement, comments are also handled correctly now.
+- ExpandedStyle: Additional brackets fixes on nested SwitchExpression. (i will make issues for better ilustration in the future)
+- Benchmark now uses the updated code formatting changes for comparisons and it should not fail anymore.
+
+<br>
 
 ## [0.9.4] - 12/5/2023
 
@@ -20,6 +40,8 @@ Import it using npm: [dart-polisher](https://www.npmjs.com/package/dart-polisher
 
 ### Fixes
 - Grinder build task now accepts relative paths (builds are still relative to ./build dir)
+
+<br>
 
 ## [0.9.2] - 10/10/2022
 - `DartFormatter` constructor argument: `FormatterOptions` argument its now optional.
@@ -78,7 +100,8 @@ Import it using npm: [dart-polisher](https://www.npmjs.com/package/dart-polisher
 - Initial version.
 
 
-[Unreleased]: https://github.com/xnfo-dart/dart-polisher/compare/v0.9.4...HEAD
+[Unreleased]: https://github.com/xnfo-dart/dart-polisher/compare/v0.9.5...HEAD
+[0.9.5]: https://github.com/xnfo-dart/dart-polisher/releases/tag/v0.9.5
 [0.9.4]: https://github.com/xnfo-dart/dart-polisher/releases/tag/v0.9.4
 [0.9.2]: https://github.com/xnfo-dart/dart-polisher/releases/tag/v0.9.2
 [0.9.1]: https://github.com/xnfo-dart/dart-polisher/releases/tag/v0.9.1

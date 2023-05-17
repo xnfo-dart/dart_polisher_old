@@ -184,16 +184,18 @@ Future<void> nodeBench() async
     var out = FilePath("build").join("node");
     out.createDirectory(recursive: true);
 
-    // Benchmark Test
-    // 10x slower than Dart :(
+    // Benchmark Test '> node build/node/bench.js'
+    // [dart 3.0] 8x slower than Compiled Dart :()
+    // [dart 2.19] 10x slower than Compiled Dart :(
 
     var tempFile = File("${Directory.systemTemp.path}/dart_polish_bench.js");
     Dart2js.compile(File("benchmark/js/benchmark_js.dart"), outFile: tempFile);
 
     var dart2jsBenOutput = tempFile.readAsStringSync();
-    File("$out/bench.js").writeAsStringSync("${preamble.getPreamble()}$dart2jsBenOutput");
+    var outFilePath = out.join("bench.js");
+    File("$outFilePath").writeAsStringSync("${preamble.getPreamble()}$dart2jsBenOutput");
 
-    log("Benchmark for node had been created in: ${out.asDirectory.absolute}");
+    log("Benchmark for node had been created in: ${outFilePath.asFile.absolute}");
 }
 
 /// Gets ready to publish a new version of the package.

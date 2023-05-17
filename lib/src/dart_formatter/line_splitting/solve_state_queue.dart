@@ -96,9 +96,13 @@ class SolveStateQueue
     /// Compares the overflow and cost of [a] to [b].
     int _compareScore(SolveState a, SolveState b)
     {
-        if (a.splits.cost != b.splits.cost)
+        //! NOTE(tekert): so.. 'return a.splits.cost.compareTo(b.splits.cost);' is inneficient...
+        var aCost = a.splits.cost;
+        var bCost = b.splits.cost;
+        if (aCost != bCost)
         {
-            return a.splits.cost.compareTo(b.splits.cost);
+            if (aCost < bCost) return -1;
+            return 1;
         }
 
         return a.overflowChars.compareTo(b.overflowChars);
