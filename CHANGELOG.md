@@ -5,8 +5,12 @@ Upstream changelog: [dart_style changelog](https://github.com/dart-lang/dart_sty
 
 ## [Unreleased]
 
+<br>
+
+## [0.9.5] - 17/5/2023
+
 ### Upstream fixes
-- Apply patches from v2.3.1 and remaining fixes from v2.3.0
+- Apply patches up to released dart_style v2.3.1
 - Finally (from upstream) they decided to abandon that abomination of SwitchExpressionCase formatting.
 How they doesn't see how bad it looks before coding it.. i don't know, and then making dynamic format based on case size, worse.
 still, ExpandedStyle didn't suffer from that, i deleted that heresy as soon as i saw it incoming on commits.
@@ -96,7 +100,8 @@ Import it using npm: [dart-polisher](https://www.npmjs.com/package/dart-polisher
 - Initial version.
 
 
-[Unreleased]: https://github.com/xnfo-dart/dart-polisher/compare/v0.9.4...HEAD
+[Unreleased]: https://github.com/xnfo-dart/dart-polisher/compare/v0.9.5...HEAD
+[0.9.5]: https://github.com/xnfo-dart/dart-polisher/releases/tag/v0.9.5
 [0.9.4]: https://github.com/xnfo-dart/dart-polisher/releases/tag/v0.9.4
 [0.9.2]: https://github.com/xnfo-dart/dart-polisher/releases/tag/v0.9.2
 [0.9.1]: https://github.com/xnfo-dart/dart-polisher/releases/tag/v0.9.1
