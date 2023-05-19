@@ -9,9 +9,9 @@ import 'dart:io';
 
 import 'package:dart_polisher/dart_polisher.dart';
 
-import 'output.dart';
-import 'show.dart';
-import 'summary.dart';
+import 'package:dart_polisher/src/cli/output.dart';
+import 'package:dart_polisher/src/cli/show.dart';
+import 'package:dart_polisher/src/cli/summary.dart';
 
 const dartFormatterVersion = DPConst.VERSION;
 

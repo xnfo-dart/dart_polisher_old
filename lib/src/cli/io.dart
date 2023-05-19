@@ -10,10 +10,10 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 
-import 'cli_options.dart';
-import '../dart_formatter/dart_formatter.dart';
-import '../dart_formatter/exceptions.dart';
-import '../dart_formatter/source_code.dart';
+import 'package:dart_polisher/src/cli/cli_options.dart';
+import 'package:dart_polisher/src/dart_formatter.dart';
+import 'package:dart_polisher/src/exceptions.dart';
+import 'package:dart_polisher/src/source_code.dart';
 
 /// Reads and formats input from stdin until closed.
 Future<void> formatStdin(CliOptions options, List<int>? selection, String name) async

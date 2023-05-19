@@ -6,7 +6,7 @@
 library dart_style.test.string_compare_test;
 
 //import 'package:dart_style/src/string_compare.dart';
-import 'package:dart_polisher/src/dart_formatter/string_compare.dart';
+import 'package:dart_polisher/src/string_compare.dart';
 import 'package:test/test.dart';
 
 void main()

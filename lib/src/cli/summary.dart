@@ -6,7 +6,7 @@
 // BSD-style license that can be found in the LICENSE file.
 import 'dart:io';
 
-import 'package:dart_polisher/src/dart_formatter/source_code.dart';
+import 'package:dart_polisher/src/source_code.dart';
 import 'package:dart_polisher/src/cli/cli_options.dart';
 
 /// The kind of summary shown after all formatting is complete.

@@ -1,8 +1,8 @@
 // ignore_for_file: constant_identifier_names
 
-import 'package:dart_polisher/src/dart_formatter/style_fix.dart';
+import 'package:dart_polisher/src/style_fix.dart';
 import 'package:dart_polisher/src/dp_constants.dart';
-import 'package:dart_polisher/src/dart_formatter/utils/bitmasks.dart';
+import 'package:dart_polisher/src/utils/bitmasks.dart';
 
 /// Styles can have each different tab modes and indents.
 enum CodeStyle {

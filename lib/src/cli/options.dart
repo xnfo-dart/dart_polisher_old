@@ -6,7 +6,7 @@
 // BSD-style license that can be found in the LICENSE file.
 import 'package:args/args.dart';
 
-import 'package:dart_polisher/src/dart_formatter/style_fix.dart';
+import 'package:dart_polisher/src/style_fix.dart';
 import 'package:dart_polisher/src/dp_constants.dart';
 
 void defineFormatOptions(ArgParser parser, {bool verbose = false})
