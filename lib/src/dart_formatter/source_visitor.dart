@@ -474,9 +474,7 @@ class SourceVisitor extends ThrowingAstVisitor
         {
             // Always split if there are multiple cascade sections.
         }
-        else if (target is ListLiteral ||
-            target is RecordLiteral ||
-            target is SetOrMapLiteral)
+        else if (target.isCollectionLiteral)
         {
             splitIfTargetSplits = false;
         }
