@@ -3195,7 +3195,7 @@ class SourceVisitor extends ThrowingAstVisitor
         {
             // Wrap the when clause rule around the pattern so that if the pattern
             // splits then we split before "when" too.
-            builder.startRule();
+            builder.startLazyRule();
             //! CHANGED(tekert) replace Constant with runtime options
             //builder.nestExpression(indent: Indent.block);
             builder.nestExpression(indent: _formatter.options.tabSizes.block);

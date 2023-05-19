@@ -5,6 +5,9 @@ Upstream changelog: [dart_style changelog](https://github.com/dart-lang/dart_sty
 
 ## [Unreleased]
 
+### Upstream fixes
+- Don't force split on a line comment before a switch expression case
+
 <br>
 
 ## [0.9.5] - 17/5/2023
