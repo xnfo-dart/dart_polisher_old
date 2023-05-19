@@ -5,8 +5,9 @@ Upstream changelog: [dart_style changelog](https://github.com/dart-lang/dart_sty
 
 ## [Unreleased]
 
+## [0.10.7] - 19/5/2023
+
 ### Breaking changes
-- Refactor Code to mirror upstream repo
 - Removed dart_style command (was used for testing beta builds internally)
 
 ### Upstream fixes
@@ -17,6 +18,10 @@ Upstream changelog: [dart_style changelog](https://github.com/dart-lang/dart_sty
 - Allow metadata annotations on parameters to split independently of annotations
   on other parameters.
 - Require `package:analyzer` `^5.12.0`.
+
+### Notes
+- Refactor Code to mirror upstream repo and use it for commit history merges from now on.
+- Some performance improvement in parsing parameters.
 
 <br>
 
@@ -113,7 +118,8 @@ Import it using npm: [dart-polisher](https://www.npmjs.com/package/dart-polisher
 - Initial version.
 
 
-[Unreleased]: https://github.com/xnfo-dart/dart-polisher/compare/v0.9.5...HEAD
+[Unreleased]: https://github.com/xnfo-dart/dart-polisher/compare/v0.10.7...HEAD
+[0.10.7]: https://github.com/xnfo-dart/dart-polisher/releases/tag/v0.10.7
 [0.9.5]: https://github.com/xnfo-dart/dart-polisher/releases/tag/v0.9.5
 [0.9.4]: https://github.com/xnfo-dart/dart-polisher/releases/tag/v0.9.4
 [0.9.2]: https://github.com/xnfo-dart/dart-polisher/releases/tag/v0.9.2
