@@ -7,6 +7,11 @@ Upstream changelog: [dart_style changelog](https://github.com/dart-lang/dart_sty
 
 ### Upstream fixes
 - Don't force split on a line comment before a switch expression case
+- Don't split before `.` following a record literal.
+- Don't indent parameters that have metadata annotations. Instead, align them
+  with the metadata and other parameters.
+- Allow metadata annotations on parameters to split independently of annotations
+  on other parameters.
 
 <br>
 
