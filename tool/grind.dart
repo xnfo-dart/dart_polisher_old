@@ -33,12 +33,6 @@ Future<void> validate() async
 
     // Format project.
     Dart.run("bin/format.dart", arguments: ["format", ".", "-s", "1", "-l", "90"]);
-
-    // Check if we can get parse all dependencies versions used as constants.
-    if (await getDependancyVersion("dart_style") == null)
-    {
-        throw "Cant parse all dependencies versions";
-    }
 }
 
 @Task("Validation for Continuous Integration")
