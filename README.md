@@ -1,3 +1,5 @@
+MOVED to https://github.com/xnfo-dart/dart_polisher as a fork or the google repo for better tracking and maintenance of changes upstream.
+
 # Dart Polisher [![Formatter](https://shields.io/badge/dart-Formatter_(fork)-green?logo=dart&style=flat-square)](https://github.com/xnfo-dart/dart_polisher) ![Issues](https://img.shields.io/github/issues/xnfo-dart/dart_polisher)
 > *Forked* Dart code formatter + CLI + custom styles
 
