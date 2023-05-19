@@ -12,6 +12,7 @@ Upstream changelog: [dart_style changelog](https://github.com/dart-lang/dart_sty
   with the metadata and other parameters.
 - Allow metadata annotations on parameters to split independently of annotations
   on other parameters.
+- Require `package:analyzer` `^5.12.0`.
 
 <br>
 
