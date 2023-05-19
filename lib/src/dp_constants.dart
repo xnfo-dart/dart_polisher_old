@@ -6,9 +6,6 @@ class DPConst
     // NOTE: The following line of code is modified by tool/grind.dart.
     /// Dart Polisher version number
     static const String VERSION = "0.10.6-dev";
-    // NOTE: The following line of code is modified by tool/grind.dart.
-    /// This version is used to embed dart_style as a separate command in cli.
-    static const String DART_STYLE_DEP_VERSION = "2.3.1";
 
     /// Version string
     static const String VERSION_STRING = "Formatter version: $VERSION"

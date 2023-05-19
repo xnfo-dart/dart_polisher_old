@@ -247,13 +247,6 @@ Future<void> bump() async
     var versionSource = versionFile.readAsStringSync();
     var versionReplaced = updateVersionConstant(versionSource, "VERSION", bumped);
     // Update the version dependencies in dp_constants.dart.
-    var dartStyleVersion = await getDependancyVersion("dart_style");
-    if (dartStyleVersion != null)
-    {
-        versionReplaced = updateVersionConstant(
-            versionReplaced, "DART_STYLE_DEP_VERSION", dartStyleVersion);
-        versionFile.writeAsStringSync(versionReplaced);
-    }
     versionFile.writeAsStringSync(versionReplaced);
 
     // Update the version in the CHANGELOG.

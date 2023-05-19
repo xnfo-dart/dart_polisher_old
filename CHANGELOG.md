@@ -5,6 +5,10 @@ Upstream changelog: [dart_style changelog](https://github.com/dart-lang/dart_sty
 
 ## [Unreleased]
 
+### Breaking changes
+- Refactor Code to mirror upstream repo
+- Removed dart_style command (was used for testing beta builds internally)
+
 ### Upstream fixes
 - Don't force split on a line comment before a switch expression case
 - Don't split before `.` following a record literal.

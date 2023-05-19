@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
-import 'package:dart_polisher/src/cli/commands/dartstyle_command.dart';
 import 'package:dart_polisher/src/cli/commands/format_command.dart';
 import 'package:dart_polisher/src/dp_constants.dart';
 
@@ -39,7 +38,6 @@ void main(List<String> args) async
             negatable: false,
             help: 'Show Dart Formatter versions.',
         )
-        ..addCommand(DartStyleCommand(verbose: verbose))
         ..addCommand(FormatCommand(verbose: verbose));
 
     try
