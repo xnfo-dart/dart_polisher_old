@@ -4516,7 +4516,7 @@ class SourceVisitor extends ThrowingAstVisitor
         return hasLineCommentBefore(rightBracket);
     }
 
-    //! CHANGED(tekert) create new helper function for common intruction in _beginBody
+    //! CHANGED(tekert) create new helper function for use in _beginBody
     void _beginBodyBlock(Token leftBracket, {bool space = false, bool indent = true})
     {
         // Create a rule for whether or not to split the block contents. If this
@@ -4532,6 +4532,38 @@ class SourceVisitor extends ThrowingAstVisitor
             indent: indent);
     }
 
+    /// Return true if this node has a block like sintax between {}, for example functions
+    /// but not Collection Literals or Argument Lists between {}.
+    ///
+    /// Returns true if nodeType is null (is a node with only comments inside)
+    //! CHANGED(tekert)
+    bool _isBlockLike(AstNode? nodeType)
+    {
+        // nodeType is null if we are visiting a node that
+        // is empty (is a node with only comments inside)
+        // return true either way.
+        if (nodeType == null) return true;
+
+        if ((!nodeType.isCollectionLiteral) &&
+            /* ArgumentList are not blocks */
+            (nodeType is! ArgumentList) &&
+            /* AssertInitializer & AssertStatement in a Collection Literal */
+            (nodeType is! Assertion) &&
+            /* DartPattern can have literal expressions. */
+            (nodeType is! DartPattern) &&
+            /* Treat EnumDeclaration  like literals for now. */
+            (nodeType is! EnumDeclaration) &&
+            /* SwitchPatternCase are aready open as of ^2.3.0 */
+            (nodeType.parent is! SwitchPatternCase) &&
+            /* NOTE: Dont Expand empty SwitchStatement for now 'switch(1) {}'. */
+            (nodeType is SwitchStatement ? nodeType.members.isNotEmpty : true))
+        {
+            return true;
+        }
+        else
+            return false;
+    }
+
     /// Begins writing a bracket-delimited body whose contents are a nested
     /// block chunk.
     ///
@@ -4544,18 +4576,9 @@ class SourceVisitor extends ThrowingAstVisitor
         //! CHANGED(tekert) add new line on everything except some collection literals
         //!  (Assertion In contructors and statements, ArgumentList with trailing comma).
         //! SwitchPatternCase Blocks by default uses a new line.
-        if ((leftBracket.type == TokenType.OPEN_CURLY_BRACKET) &&
-                (_formatter.options.style.mask & BodyOpt.outerBracesOnBlockLike > 0) &&
-                (nodeType is! TypedLiteral) && // Its a typed literal expression.
-                (nodeType is! RecordLiteral) && // Its like a literal expression.
-                (nodeType is! DartPattern) && // Can have literal expressions.
-                (nodeType is! EnumDeclaration) && // Treat it like literals for now.
-                (nodeType?.parent
-                    is! SwitchPatternCase) && // They are aready open as of ^2.3.0
-                (nodeType is SwitchStatement
-                    ? nodeType.members.isNotEmpty
-                    : true) // Use default dart_style on empty switch statements for now 'switch() {}'.
-            )
+        if (_formatter.outerBracesOnBlockLike &&
+            (leftBracket.type == TokenType.OPEN_CURLY_BRACKET) &&
+            _isBlockLike(nodeType))
         // EnumDeclaration is handled in [visitEnumDeclaration]
         // TypedLiteral, Literal, DartPattern, Assertion, ArgumentList are handled in [_visitCollectionLiteral]
         //TODO (tekert): make enums format with an outer bracket if it splits elements.

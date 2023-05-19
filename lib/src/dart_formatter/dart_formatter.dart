@@ -50,6 +50,8 @@ class DartFormatter
 
     final Set<StyleFix> fixes;
 
+    get outerBracesOnBlockLike => options.style.mask & BodyOpt.outerBracesOnBlockLike > 0;
+
     /// Creates a new formatter for Dart code.
     ///
     /// TODO (tekert): expand doc to more options
